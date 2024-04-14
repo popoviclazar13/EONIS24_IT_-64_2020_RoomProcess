@@ -2,6 +2,7 @@
 using RoomProcess.Models.Entities;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace RoomProcess.Helpers
@@ -17,7 +18,11 @@ namespace RoomProcess.Helpers
 
         public void CreatePasswordHash(string? password, out byte[] passwordHash, out byte[] passwordSalt)
         {
-            throw new NotImplementedException();
+            using (var hmac = new HMACSHA512())
+            {
+                passwordSalt = hmac.Key;
+                passwordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
+            }
         }
 
         public string CreateToken(Korisnik korisnik)
@@ -46,17 +51,44 @@ namespace RoomProcess.Helpers
 
         public string GetClaim(string token, string claimType)
         {
-            throw new NotImplementedException();
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var securityToken = tokenHandler.ReadToken(token) as JwtSecurityToken;
+
+            var claimValue = securityToken.Claims.First(claim => claim.Type == claimType).Value;
+            return claimValue;
         }
 
         public bool ValidateCurrentToken(string token)
         {
-            throw new NotImplementedException();
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
+                _config.GetSection("AppSettings:Token").Value)); //key from appsettings.json
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+
+            try
+            {
+                tokenHandler.ValidateToken(token, new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = key,
+                    ValidateIssuer = false,
+                    ValidateAudience = false
+                }, out SecurityToken validatedToken);
+            }
+            catch
+            {
+                return false;
+            }
+            return true;
         }
 
         public bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt)
         {
-            throw new NotImplementedException();
+            using (var hmac = new HMACSHA512(passwordSalt))
+            {
+                var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
+                return computedHash.SequenceEqual(passwordHash); //comparing saved and computed hash
+            }
         }
 
         private string GetRole(Korisnik korisnik)
@@ -70,6 +102,7 @@ namespace RoomProcess.Helpers
                 return "Gost";
 
         }
+
 
     }
 }

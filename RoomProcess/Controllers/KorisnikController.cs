@@ -1,13 +1,14 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using RoomProcess.Helpers;
 using RoomProcess.InterfaceRepository;
 using RoomProcess.Models.DTO;
 using RoomProcess.Services.KorisnikService;
 
 namespace RoomProcess.Controllers
 {
-    [Route("api/controller")]
+    [Route("api/korisnik")]
     [ApiController]
     public class KorisnikController : Controller
     {
@@ -20,19 +21,6 @@ namespace RoomProcess.Controllers
             _korisnikRepository = korisnikRepository;
             _mapper = mapper;
             _korisnikService = korisnikService;
-        }
-
-        [AllowAnonymous]
-        [HttpPost("Login")]
-        public ActionResult LoginKorisnik([FromBody]KorisnikLoginDTO korisnik)
-        {
-            return Ok(_korisnikService.LoginKorisnik(korisnik));
-        }
-        [AllowAnonymous]
-        [HttpPost("Register")]
-        public ActionResult CreateKorisnik([FromBody]KorisnikRequestDTO korisnik)
-        {
-            return Ok(_korisnikService.CreateKorisnik(korisnik));
         }
 
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -52,8 +40,9 @@ namespace RoomProcess.Controllers
                 return StatusCode(400);
 
             }
-            else { 
-                return Ok(korisniks); 
+            else
+            {
+                return Ok(korisniks);
             }
         }
 
@@ -79,11 +68,34 @@ namespace RoomProcess.Controllers
             {
                 return Ok(korisnik);
             }
-            
+
+        }
+
+        [AllowAnonymous]
+        [HttpPost("Login")]
+        public ActionResult LoginKorisnik([FromBody]KorisnikLoginDTO korisnik)
+        {
+            return Ok(_korisnikService.LoginKorisnik(korisnik));
+        }
+        [AllowAnonymous]
+        [HttpPost("Register")]
+        public ActionResult CreateKorisnik([FromBody]KorisnikRequestDTO korisnik)
+        {
+            return Ok(_korisnikService.CreateKorisnik(korisnik));
         }
 
         [HttpPut("{id}")]
         [AuthRole("Role", "Admin")]
+        public ActionResult UpdateKorisnik(int korisnikId, KorisnikRequestDTO data)
+        {
+            return Ok(_korisnikService.UpdateKorisnik(korisnikId, data));
+        }
 
+        [HttpDelete("{id}")]
+        [AuthRole("Role", "Admin")]
+        public ActionResult DeleteKorisnik(int korisnikId)
+        {
+            return Ok(_korisnikService.DeleteKorisnik(korisnikId));
+        }
     }
 }
