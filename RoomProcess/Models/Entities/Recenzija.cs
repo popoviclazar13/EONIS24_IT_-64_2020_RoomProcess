@@ -17,8 +17,10 @@ namespace RoomProcess.Models.Entities
         public int Ocena {  get; set; }
         [ForeignKey("Korisnik")]
         public int KorisnikId { get; set; }
+        public Korisnik Korisnik { get; set; }
         [ForeignKey("Rezervacija")]
         public int RezervacijaId { get; set; }
+        public Rezervacija Rezervacija { get; set; }
 
         public Recenzija() { }
     }

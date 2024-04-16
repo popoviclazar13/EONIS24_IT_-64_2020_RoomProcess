@@ -8,11 +8,8 @@ namespace RoomProcess.InterfaceRepository
         Korisnik GetKorisnikById(int id);
         bool KorisnikExist(int KorisnikId);
         bool CreateKorisnik(Korisnik korisnik);
-
         bool UpdateKorisnik(Korisnik korisnik);
-
         bool DeleteKorisnik(Korisnik korisnik);
-
         bool Save();
 
     }

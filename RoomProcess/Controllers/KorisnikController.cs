@@ -46,7 +46,7 @@ namespace RoomProcess.Controllers
             }
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{korisnikId}")]
         [Authorize]
         public ActionResult GetKorisnikById(int korisnikId)
         {
@@ -84,14 +84,14 @@ namespace RoomProcess.Controllers
             return Ok(_korisnikService.CreateKorisnik(korisnik));
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{korisnikId}")]
         [AuthRole("Role", "Admin")]
         public ActionResult UpdateKorisnik(int korisnikId, KorisnikRequestDTO data)
         {
             return Ok(_korisnikService.UpdateKorisnik(korisnikId, data));
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{korisnikId}")]
         [AuthRole("Role", "Admin")]
         public ActionResult DeleteKorisnik(int korisnikId)
         {

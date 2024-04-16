@@ -10,6 +10,7 @@ namespace RoomProcess.Models.Entities
         public string OpremaNaziv {  get; set; }
         [ForeignKey("Objekat")]
         public int ObjekatId { get; set; }
+        public Objekat Objekat { get; set; }
 
         public Oprema()
         {

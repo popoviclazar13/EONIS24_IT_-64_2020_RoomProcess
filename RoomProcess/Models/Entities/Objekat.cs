@@ -15,10 +15,13 @@ namespace RoomProcess.Models.Entities
 
         [ForeignKey("Korisnik")]
         public int KorisnikId { get; set; }
+        public Korisnik Korisnik { get; set; }
         [ForeignKey("TipObjekta")]
         public int TipObjektaId { get; set; }
+        public TipObjekta TipObjekta { get; set; }
         [ForeignKey("Popust")]
         public int PopustId { get; set; }
+        public Popust Popust { get; set; }
 
         public Objekat() { }
 
