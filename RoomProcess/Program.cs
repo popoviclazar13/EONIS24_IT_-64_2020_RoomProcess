@@ -1,8 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using RoomProcess.Data;
+using RoomProcess.Helpers;
 using RoomProcess.InterfaceRepository;
 using RoomProcess.Profiles;
 using RoomProcess.Repository;
+using RoomProcess.Services.KorisnikService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +31,11 @@ builder.Services.AddScoped<IRecenzijaRepository, RecenzijaRepository>();
 builder.Services.AddScoped<IRezervacijaRepository, RezervacijaRepository>();
 builder.Services.AddScoped<IPopustRepository, PopustRepository>();
 builder.Services.AddScoped<IOpremaRepository, OpremaRepository>();
+builder.Services.AddScoped<IKorisnikService, KorisnikService>();
+//
+
+//HELPER
+builder.Services.AddScoped<IAuthHelper, AuthHelper>();
 //
 
 //MAPPER

@@ -1,39 +1,33 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using RoomProcess.Helpers;
 using RoomProcess.InterfaceRepository;
 using RoomProcess.Models.DTO;
 using RoomProcess.Models.Entities;
 using RoomProcess.Repository;
-using RoomProcess.Services.KorisnikService;
-using System;
 
 namespace RoomProcess.Controllers
 {
-    [Route("api/uloga")]
+    [Route("api/popust")]
     [ApiController]
-    public class UlogaController : ControllerBase
+    public class PopustController : ControllerBase
     {
-        private readonly IUlogaRepository _ulogaRepository;
+        private readonly IPopustRepository _popustRepository;
         private readonly IMapper _mapper;
 
-        public UlogaController(IUlogaRepository ulogaRepository, IMapper mapper)
+        public PopustController(IPopustRepository popustRepository, IMapper mapper)
         {
-            _ulogaRepository = ulogaRepository;
+            _popustRepository = popustRepository;
             _mapper = mapper;
         }
-
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpGet]
-        //[Authorize]
-        public ActionResult GetUlogas()
+        public ActionResult GetPopusts()
         {
-            var ulogas = _mapper.Map<List<UlogaDTO>>(_ulogaRepository.GetUlogas());
+            var popusts = _mapper.Map<List<PopustDTO>>(_popustRepository.GetPopusts());
 
             if (!ModelState.IsValid)
             {
@@ -41,33 +35,37 @@ namespace RoomProcess.Controllers
                 return StatusCode(400);
 
             }
-            return Ok(ulogas);
+            return Ok(popusts);
         }
 
-        [HttpGet("{ulogaId}")]
+        [HttpGet("{popustId}")]
         //[Authorize]
-        public ActionResult GetUlogaById(int ulogaId)
+        public ActionResult GetPopustById(int popustId)
         {
-            return Ok(_ulogaRepository.GetUlogaById(ulogaId));
-        }
+            if (!_popustRepository.PopustExist(popustId))
+            {
+                ModelState.AddModelError("", "Popust with this ID does not exist");
+                return StatusCode(404);
 
+            }
+            else
+            {
+                return Ok(_popustRepository.GetPopustById(popustId));
+            }
+        }
         [HttpPost]
         //[AuthRole("Role", "Admin")]
-        public ActionResult<Uloga> CreateUloga([FromBody]UlogaDTO ulogaDTO)
+        public ActionResult<Popust> CreatePopust([FromBody] PopustDTO popustDTO)
         {
-            if (ulogaDTO == null)
+            if (popustDTO == null)
             {
-                return BadRequest(ulogaDTO);
+                return BadRequest(popustDTO);
             }
-            /*if (uloga.UlogaId > 0)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError);
-            }*/
-            var uloga = _ulogaRepository.GetUlogas().Where(u => u.UlogaId == ulogaDTO.UlogaId).FirstOrDefault();
+            var popust = _popustRepository.GetPopusts().Where(u => u.PopustId == popustDTO.PopustId).FirstOrDefault();
 
-            if (uloga != null)
+            if (popust != null)
             {
-                ModelState.AddModelError("", "Uloga already exists");
+                ModelState.AddModelError("", "Popust already exists");
                 return StatusCode(422);
             }
 
@@ -77,9 +75,9 @@ namespace RoomProcess.Controllers
                 return StatusCode(400);
             }
 
-            var ulogaMap = _mapper.Map<Uloga>(ulogaDTO);
+            var popustMap = _mapper.Map<Popust>(popustDTO);
 
-            if (!_ulogaRepository.CreateUloga(ulogaMap))
+            if (!_popustRepository.CreatePopust(popustMap))
             {
                 ModelState.AddModelError("", "Something went wrong while saving");
             }
@@ -93,15 +91,15 @@ namespace RoomProcess.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpPut]
         //[AuthRole("Role", "Admin")]
-        
-        public IActionResult UpdateUloga([FromBody] UlogaDTO updateUloga)
+
+        public IActionResult UpdatePopust([FromBody] PopustDTO updatePopust)
         {
-            if (updateUloga == null)
+            if (updatePopust == null)
             {
                 ModelState.AddModelError("", "Bad request");
                 return StatusCode(400);
             }
-            if (!_ulogaRepository.UlogaExist(updateUloga.UlogaId))
+            if (!_popustRepository.PopustExist(updatePopust.PopustId))
             {
                 ModelState.AddModelError("", "Not found");
                 return StatusCode(404);
@@ -111,46 +109,43 @@ namespace RoomProcess.Controllers
                 ModelState.AddModelError("", "Bad request");
                 return StatusCode(400);
             }
-            var ulogaMap = _mapper.Map<Uloga>(updateUloga);
+            var popustMap = _mapper.Map<Popust>(updatePopust);
 
 
-            if (!_ulogaRepository.UpdateUloga(ulogaMap))
+            if (!_popustRepository.UpdatePopust(popustMap))
             {
-                ModelState.AddModelError("", "Something went wrong while updating uloga");
+                ModelState.AddModelError("", "Something went wrong while updating popust");
 
             }
 
             return NoContent();
         }
-
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [HttpDelete("{ulogaId}")]
+        [HttpDelete("{popustId}")]
         //[AuthRole("Role", "Admin")]
-
-        public IActionResult DeleteUloga(int ulogaId)
+        public IActionResult DeletePopust(int popustId)
         {
-            var uloga = _ulogaRepository.GetUlogaById(ulogaId);
+            var popust = _popustRepository.GetPopustById(popustId);
 
             if (!ModelState.IsValid)
             {
                 ModelState.AddModelError("", "Bad request");
                 return StatusCode(400);
             }
-            if (_ulogaRepository.GetUlogaById(ulogaId) == null)
+            if (_popustRepository.GetPopustById(popustId) == null)
             {
-                ModelState.AddModelError("", "Error 500");
-                return StatusCode(500);
+                ModelState.AddModelError("", "Popust with this ID does not exist");
+                return StatusCode(404);
             }
-            if (!_ulogaRepository.DeleteUloga(uloga))
+            if (!_popustRepository.DeletePopust(popust))
             {
-                ModelState.AddModelError("", "Something went wrong while deleting uloga");
+                ModelState.AddModelError("", "Something went wrong while deleting popust");
             }
             return NoContent();
         }
-        
     }
 }

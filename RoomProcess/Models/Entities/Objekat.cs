@@ -12,6 +12,8 @@ namespace RoomProcess.Models.Entities
         public string Grad {  get; set; }
         public int Cena { get; set; }
         public int Naknade { get; set; }
+        public int x {  get; set; }
+        public int y { get; set; }
 
         public ICollection<Slika> Slike { get; set; }
 

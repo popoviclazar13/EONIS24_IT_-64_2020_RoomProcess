@@ -10,7 +10,9 @@ namespace RoomProcess.Models.DTO
         public string Grad { get; set; }
         public int Cena { get; set; }
         public int Naknade { get; set; }
-        public ICollection<Slika> Slike { get; set; }
+        //public ICollection<Slika> Slike { get; set; } //ZA SADA
+        public int x { get; set; }
+        public int y { get; set; }
         public int KorisnikId { get; set; }
         //public KorisnikDTO korisnikDTO { get; set; }
         public int TipObjektaId { get; set; }

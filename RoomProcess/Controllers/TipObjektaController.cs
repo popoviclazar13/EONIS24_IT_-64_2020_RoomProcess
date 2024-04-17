@@ -1,29 +1,24 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using RoomProcess.Helpers;
 using RoomProcess.InterfaceRepository;
 using RoomProcess.Models.DTO;
 using RoomProcess.Models.Entities;
 using RoomProcess.Repository;
-using RoomProcess.Services.KorisnikService;
-using System;
 
 namespace RoomProcess.Controllers
 {
-    [Route("api/uloga")]
+    [Route("api/tipObjekta")]
     [ApiController]
-    public class UlogaController : ControllerBase
+    public class TipObjektaController : ControllerBase
     {
-        private readonly IUlogaRepository _ulogaRepository;
+        private readonly ITipObjektaRepository _tipObjektaRepository;
         private readonly IMapper _mapper;
 
-        public UlogaController(IUlogaRepository ulogaRepository, IMapper mapper)
+        public TipObjektaController(ITipObjektaRepository tipObjektaRepository, IMapper mapper)
         {
-            _ulogaRepository = ulogaRepository;
+            _tipObjektaRepository = tipObjektaRepository;
             _mapper = mapper;
         }
-
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -31,9 +26,9 @@ namespace RoomProcess.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpGet]
         //[Authorize]
-        public ActionResult GetUlogas()
+        public ActionResult GetTipObjektas()
         {
-            var ulogas = _mapper.Map<List<UlogaDTO>>(_ulogaRepository.GetUlogas());
+            var tipObjektas = _mapper.Map<List<TipObjektaDTO>>(_tipObjektaRepository.GetTipObjektas());
 
             if (!ModelState.IsValid)
             {
@@ -41,33 +36,31 @@ namespace RoomProcess.Controllers
                 return StatusCode(400);
 
             }
-            return Ok(ulogas);
+            return Ok(tipObjektas);
         }
-
-        [HttpGet("{ulogaId}")]
+        [HttpGet("{tipObjektaId}")]
         //[Authorize]
-        public ActionResult GetUlogaById(int ulogaId)
+        public ActionResult GetTipObjektaById(int tipObjektaId)
         {
-            return Ok(_ulogaRepository.GetUlogaById(ulogaId));
+            return Ok(_tipObjektaRepository.GetTipObjektaById(tipObjektaId));
         }
-
         [HttpPost]
         //[AuthRole("Role", "Admin")]
-        public ActionResult<Uloga> CreateUloga([FromBody]UlogaDTO ulogaDTO)
+        public ActionResult<TipObjekta> CreateTipObjekta([FromBody] TipObjektaDTO tipObjektaDTO)
         {
-            if (ulogaDTO == null)
+            if (tipObjektaDTO == null)
             {
-                return BadRequest(ulogaDTO);
+                return BadRequest(tipObjektaDTO);
             }
             /*if (uloga.UlogaId > 0)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }*/
-            var uloga = _ulogaRepository.GetUlogas().Where(u => u.UlogaId == ulogaDTO.UlogaId).FirstOrDefault();
+            var uloga = _tipObjektaRepository.GetTipObjektas().Where(u => u.TipObjektaId == tipObjektaDTO.TipObjektaId).FirstOrDefault();
 
             if (uloga != null)
             {
-                ModelState.AddModelError("", "Uloga already exists");
+                ModelState.AddModelError("", "TipObjekta already exists");
                 return StatusCode(422);
             }
 
@@ -77,9 +70,9 @@ namespace RoomProcess.Controllers
                 return StatusCode(400);
             }
 
-            var ulogaMap = _mapper.Map<Uloga>(ulogaDTO);
+            var tipObjektaMap = _mapper.Map<TipObjekta>(tipObjektaDTO);
 
-            if (!_ulogaRepository.CreateUloga(ulogaMap))
+            if (!_tipObjektaRepository.CreateTipObjekta(tipObjektaMap))
             {
                 ModelState.AddModelError("", "Something went wrong while saving");
             }
@@ -93,15 +86,15 @@ namespace RoomProcess.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpPut]
         //[AuthRole("Role", "Admin")]
-        
-        public IActionResult UpdateUloga([FromBody] UlogaDTO updateUloga)
+
+        public IActionResult UpdateTipObjekta([FromBody] TipObjektaDTO updateTipObjekta)
         {
-            if (updateUloga == null)
+            if (updateTipObjekta == null)
             {
                 ModelState.AddModelError("", "Bad request");
                 return StatusCode(400);
             }
-            if (!_ulogaRepository.UlogaExist(updateUloga.UlogaId))
+            if (!_tipObjektaRepository.TipObjektaExist(updateTipObjekta.TipObjektaId))
             {
                 ModelState.AddModelError("", "Not found");
                 return StatusCode(404);
@@ -111,46 +104,44 @@ namespace RoomProcess.Controllers
                 ModelState.AddModelError("", "Bad request");
                 return StatusCode(400);
             }
-            var ulogaMap = _mapper.Map<Uloga>(updateUloga);
+            var tipObjektaMap = _mapper.Map<TipObjekta>(updateTipObjekta);
 
 
-            if (!_ulogaRepository.UpdateUloga(ulogaMap))
+            if (!_tipObjektaRepository.UpdateTipObjekta(tipObjektaMap))
             {
-                ModelState.AddModelError("", "Something went wrong while updating uloga");
+                ModelState.AddModelError("", "Something went wrong while updating tipObjekta");
 
             }
 
             return NoContent();
         }
-
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [HttpDelete("{ulogaId}")]
+        [HttpDelete("{tipObjektaId}")]
         //[AuthRole("Role", "Admin")]
 
-        public IActionResult DeleteUloga(int ulogaId)
+        public IActionResult DeleteTipObjekta(int tipObjektaId)
         {
-            var uloga = _ulogaRepository.GetUlogaById(ulogaId);
+            var tipObjekta = _tipObjektaRepository.GetTipObjektaById(tipObjektaId);
 
             if (!ModelState.IsValid)
             {
                 ModelState.AddModelError("", "Bad request");
                 return StatusCode(400);
             }
-            if (_ulogaRepository.GetUlogaById(ulogaId) == null)
+            if (_tipObjektaRepository.GetTipObjektaById(tipObjektaId) == null)
             {
                 ModelState.AddModelError("", "Error 500");
                 return StatusCode(500);
             }
-            if (!_ulogaRepository.DeleteUloga(uloga))
+            if (!_tipObjektaRepository.DeleteTipObjekta(tipObjekta))
             {
-                ModelState.AddModelError("", "Something went wrong while deleting uloga");
+                ModelState.AddModelError("", "Something went wrong while deleting tipObjekta");
             }
             return NoContent();
         }
-        
     }
 }

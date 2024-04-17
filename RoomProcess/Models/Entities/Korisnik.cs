@@ -11,6 +11,10 @@ namespace RoomProcess.Models.Entities
         public string Prezime { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
+
+        public byte[]? PasswordSalt { get; set; }
+        public byte[]? PasswordHash { get; set; }
+
         [ForeignKey("Uloga")]
         public int UlogaId { get; set;}
         public Uloga Uloga { get; set;}

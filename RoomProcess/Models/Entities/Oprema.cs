@@ -5,6 +5,11 @@ namespace RoomProcess.Models.Entities
 {
     public class Oprema
     {
+        public Oprema()
+        {
+            //Objekats = new List<Objekat>();
+        }
+
         [Key]
         public int OpremaId { get; set; }
         public string OpremaNaziv {  get; set; }
@@ -12,9 +17,7 @@ namespace RoomProcess.Models.Entities
         public int ObjekatId { get; set; }
         public Objekat Objekat { get; set; }
 
-        public Oprema()
-        {
+        //public virtual ICollection<Objekat> Objekats { get; set; }
 
-        }
     }
 }

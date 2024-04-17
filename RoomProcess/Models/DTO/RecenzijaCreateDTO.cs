@@ -6,7 +6,7 @@ namespace RoomProcess.Models.DTO
     {
         public int RecenzijaId { get; set; }
         public string Tekst { get; set; }
-        public DateOnly Datum { get; set; }
+        public DateTime Datum { get; set; }
         public int Lokacija { get; set; }
         public int Cistoca { get; set; }
         public int Osoblje { get; set; }

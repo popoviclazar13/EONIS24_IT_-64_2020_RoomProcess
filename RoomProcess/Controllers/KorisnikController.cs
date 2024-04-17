@@ -29,7 +29,7 @@ namespace RoomProcess.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpGet]
-        [Authorize]
+        //[Authorize]
         public ActionResult GetKorisniks()
         {
             var korisniks = _mapper.Map<List<KorisnikDTO>>(_korisnikRepository.GetKorisniks());

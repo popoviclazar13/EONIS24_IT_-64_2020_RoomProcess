@@ -7,6 +7,6 @@ namespace RoomProcess.Models.DTO
         public int OpremaId { get; set; }
         public string OpremaNaziv { get; set; }
         public int ObjekatId { get; set; }
-        public ObjekatDTO ObjekatDTO { get; set; }
+        //public ObjekatDTO ObjekatDTO { get; set; } ZA SADA
     }
 }
