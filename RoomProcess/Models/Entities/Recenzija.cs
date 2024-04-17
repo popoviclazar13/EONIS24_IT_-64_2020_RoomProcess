@@ -8,7 +8,7 @@ namespace RoomProcess.Models.Entities
         [Key]
         public int RecenzijaId { get; set; }
         public string Tekst { get; set; }
-        public DateOnly Datum {  get; set; }
+        public DateTime Datum {  get; set; }
         public int Lokacija { get; set; }
         public int Cistoca { get; set; }
         public int Osoblje { get; set; }
@@ -19,8 +19,8 @@ namespace RoomProcess.Models.Entities
         public int KorisnikId { get; set; }
         public Korisnik Korisnik { get; set; }
         [ForeignKey("Rezervacija")]
-        public int RezervacijaId { get; set; }
-        public Rezervacija Rezervacija { get; set; }
+        public int? RezervacijaId { get; set; }
+        public Rezervacija? Rezervacija { get; set; }
 
         public Recenzija() { }
     }

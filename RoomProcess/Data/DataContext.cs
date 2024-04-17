@@ -19,5 +19,10 @@ namespace RoomProcess.Data
         public DbSet<Rezervacija> Rezervacija { get; set; }
         public DbSet<TipObjekta> TipObjekta { get; set; }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+        }
+
     }
 }

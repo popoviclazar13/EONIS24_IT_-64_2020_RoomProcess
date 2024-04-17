@@ -1,4 +1,6 @@
-﻿namespace RoomProcess.Models.DTO
+﻿using RoomProcess.Models.Entities;
+
+namespace RoomProcess.Models.DTO
 {
     public class ObjekatCreateDTO
     {
@@ -8,6 +10,7 @@
         public string Grad { get; set; }
         public int Cena { get; set; }
         public int Naknade { get; set; }
+        public ICollection<Slika> Slike { get; set; }
         public int KorisnikId { get; set; }
         //public KorisnikDTO korisnikDTO { get; set; }
         public int TipObjektaId { get; set; }

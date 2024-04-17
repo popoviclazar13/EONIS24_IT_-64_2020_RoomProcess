@@ -10,13 +10,13 @@ namespace RoomProcess.Controllers
 {
     [Route("api/korisnik")]
     [ApiController]
-    public class KorisnikController : Controller
+    public class KorisnikController : ControllerBase
     {
         private readonly IKorisnikRepository _korisnikRepository;
-        private readonly Mapper _mapper;
+        private readonly IMapper _mapper;
         private readonly IKorisnikService _korisnikService;
 
-        public KorisnikController(IKorisnikRepository korisnikRepository, Mapper mapper, IKorisnikService korisnikService)
+        public KorisnikController(IKorisnikRepository korisnikRepository, IMapper mapper, IKorisnikService korisnikService)
         {
             _korisnikRepository = korisnikRepository;
             _mapper = mapper;
@@ -47,7 +47,7 @@ namespace RoomProcess.Controllers
         }
 
         [HttpGet("{korisnikId}")]
-        [Authorize]
+        //[Authorize]
         public ActionResult GetKorisnikById(int korisnikId)
         {
             if (!_korisnikRepository.KorisnikExist(korisnikId))
@@ -85,14 +85,14 @@ namespace RoomProcess.Controllers
         }
 
         [HttpPut("{korisnikId}")]
-        [AuthRole("Role", "Admin")]
+        //[AuthRole("Role", "Admin")]
         public ActionResult UpdateKorisnik(int korisnikId, KorisnikRequestDTO data)
         {
             return Ok(_korisnikService.UpdateKorisnik(korisnikId, data));
         }
 
         [HttpDelete("{korisnikId}")]
-        [AuthRole("Role", "Admin")]
+        //[AuthRole("Role", "Admin")]
         public ActionResult DeleteKorisnik(int korisnikId)
         {
             return Ok(_korisnikService.DeleteKorisnik(korisnikId));

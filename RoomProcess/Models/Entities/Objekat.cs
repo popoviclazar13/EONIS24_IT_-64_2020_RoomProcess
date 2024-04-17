@@ -13,6 +13,8 @@ namespace RoomProcess.Models.Entities
         public int Cena { get; set; }
         public int Naknade { get; set; }
 
+        public ICollection<Slika> Slike { get; set; }
+
         [ForeignKey("Korisnik")]
         public int KorisnikId { get; set; }
         public Korisnik Korisnik { get; set; }

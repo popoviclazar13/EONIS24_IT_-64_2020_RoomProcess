@@ -7,17 +7,17 @@ namespace RoomProcess.Models.Entities
     {
         [Key]
         public int RezervacijaId { get; set; }
-        public DateOnly DatumDolaska { get; set; }
-        public DateOnly DatumOdlaska { get; set; }
+        public DateTime DatumDolaska { get; set; }
+        public DateTime DatumOdlaska { get; set; }
         public int Cena {  get; set; }
         public int BrojNocenja { get; set; }
-        public int Potvrda { get; set; }
+        public bool Potvrda { get; set; }
         [ForeignKey("Korisnik")]
         public int KorisnikId { get; set; }
         public Korisnik Korisnik { get; set; }
         [ForeignKey("Objekat")]
-        public int ObjekatId { get; set; }
-        public Objekat Objekat { get; set; }
+        public int? ObjekatId { get; set; }
+        public Objekat? Objekat { get; set; }
 
         public Rezervacija() { }
 

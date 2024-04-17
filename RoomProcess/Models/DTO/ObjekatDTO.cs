@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using RoomProcess.Models.Entities;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace RoomProcess.Models.DTO
 {
@@ -11,6 +12,7 @@ namespace RoomProcess.Models.DTO
         public int Cena { get; set; }
         public int Naknade { get; set; }
         public int KorisnikId { get; set; }
+        public ICollection<Slika> Slike { get; set; }
         public KorisnikDTO korisnikDTO { get; set; }
         public int TipObjektaId { get; set; }
         public TipObjektaDTO tipObjektaDTO { get; set; }

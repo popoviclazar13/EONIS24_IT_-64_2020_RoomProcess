@@ -99,7 +99,7 @@ namespace RoomProcess.Helpers
             else if (korisnik.UlogaId == 2)
                 return "Vlasnik";
             else
-                return "Gost";
+                return "Korisnik";
 
         }
 
