@@ -46,7 +46,7 @@ namespace RoomProcess.Controllers
             }
         }
 
-        [HttpGet("{korisnikId}")]
+        [HttpGet("korisnikId")]
         //[Authorize]
         public ActionResult GetKorisnikById(int korisnikId)
         {
@@ -84,18 +84,39 @@ namespace RoomProcess.Controllers
             return Ok(_korisnikService.CreateKorisnik(korisnik));
         }
 
-        [HttpPut("{korisnikId}")]
+        [HttpPut("korisnikId")]
         //[AuthRole("Role", "Admin")]
         public ActionResult UpdateKorisnik(int korisnikId, KorisnikRequestDTO data)
         {
             return Ok(_korisnikService.UpdateKorisnik(korisnikId, data));
         }
 
-        [HttpDelete("{korisnikId}")]
+        [HttpDelete("korisnikId")]
         //[AuthRole("Role", "Admin")]
         public ActionResult DeleteKorisnik(int korisnikId)
         {
             return Ok(_korisnikService.DeleteKorisnik(korisnikId));
         }
+        //Posebni GET zahtevi
+        [HttpGet("byUloga/ulogaId")]
+        //[Authorize]
+        public ActionResult GetKorisnikByIdUloga(int ulogaId)
+        {
+            var korisnici = _korisnikRepository.GetKorisnikByIdUloga(ulogaId);
+
+            if (!korisnici.Any())
+            {
+                return NotFound("Uloga with this ID has not been assigned to any User");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Bad request");
+            }
+
+            return Ok(korisnici);
+
+        }
+        //
     }
 }

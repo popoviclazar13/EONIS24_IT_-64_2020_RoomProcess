@@ -57,5 +57,15 @@ namespace RoomProcess.Repository
             _dataContext.Update(rezervacija);
             return Save();
         }
+        //Posebne metode za strane kljuceve
+        public ICollection<Rezervacija> GetRezervacijaByIdKorisnik(int korisnikId)
+        {
+            return _dataContext.Rezervacija.Where(r => r.KorisnikId == korisnikId).ToList();
+        }
+        public ICollection<Rezervacija> GetRezervacijaByIdObjekat(int objekatId)
+        {
+            return _dataContext.Rezervacija.Where(r => r.ObjekatId == objekatId).ToList();
+        }
+        //
     }
 }

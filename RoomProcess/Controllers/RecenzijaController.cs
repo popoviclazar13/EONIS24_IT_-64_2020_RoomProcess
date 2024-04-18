@@ -175,5 +175,47 @@ namespace RoomProcess.Controllers
             }
             return NoContent();
         }
+        //Posebni GET zahtevi
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [HttpGet("byKorisnik/korisnikId")]
+        //[Authorize]
+        public ActionResult GetRecenzijaByIdKorisnik(int korisnikId)
+        {
+            var recenzije = _recenzijaRepository.GetRecenzijaByIdKorisnik(korisnikId);
+
+            if (!recenzije.Any())
+            {
+                return NotFound("Korisnik with this ID has not been assigned to any Recenzija");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Bad request");
+            }
+
+            return Ok(recenzije);
+
+        }
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [HttpGet("byRezervacija/rezervacijaId")]
+        //[Authorize]
+        public ActionResult GetRecenzijaByIdRezervacija(int rezrvacijaId)
+        {
+            var recenzije = _recenzijaRepository.GetRecenzijaByIdRezervacija(rezrvacijaId);
+
+            if (!recenzije.Any())
+            {
+                return NotFound("Rezervacija with this ID has not been assigned to any Recenzija");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Bad request");
+            }
+
+            return Ok(recenzije);
+
+        }
+        //
     }
 }

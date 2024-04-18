@@ -146,6 +146,69 @@ namespace RoomProcess.Controllers
             }
             return NoContent();
         }
+        //Posebni GET zahtevi
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [HttpGet("byKorisnik/korisnikId")]
+        //[Authorize]
+        public ActionResult GetObjekatByIdKorisnik(int korisnikId)
+        {
+            var objekti = _objekatRepository.GetObjekatByIdKorisnik(korisnikId);
+
+            if (!objekti.Any())
+            {
+                return NotFound("Objekat with this ID has not been assigned to any User");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Bad request");
+            }
+
+            return Ok(objekti);
+
+
+        }
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [HttpGet("byTipObjekta/tipObjektaId")]
+        //[Authorize]
+        public ActionResult GetObjekatByIdTipObjekta(int tipObjektaId)
+        {
+            var objekti = _objekatRepository.GetObjekatByIdTipObjekta(tipObjektaId);
+
+            if (!objekti.Any())
+            {
+                return NotFound("Objekat with this ID has not been assigned to any TipObjekta");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Bad request");
+            }
+
+            return Ok(objekti);
+
+        }
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [HttpGet("byPopust/popustId")]
+        //[Authorize]
+        public ActionResult GetObjekatByIdPopust(int popustId)
+        {
+            var objekti = _objekatRepository.GetObjekatByIdPopust(popustId);
+
+            if (!objekti.Any())
+            {
+                return NotFound("Objekat with this ID has not been assigned to any Popust");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Bad request");
+            }
+
+            return Ok(objekti);
+
+        }
+        //
     }
 
 }

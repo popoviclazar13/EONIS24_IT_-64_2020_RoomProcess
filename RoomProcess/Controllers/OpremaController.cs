@@ -5,6 +5,7 @@ using RoomProcess.Helpers;
 using RoomProcess.InterfaceRepository;
 using RoomProcess.Models.DTO;
 using RoomProcess.Models.Entities;
+using RoomProcess.Repository;
 
 namespace RoomProcess.Controllers
 {
@@ -122,12 +123,6 @@ namespace RoomProcess.Controllers
                 ModelState.AddModelError("", "Bad request");
                 return StatusCode(400);
             }
-
-            /*if (id != updateAranzman.AranzmanID)
-            {
-                ModelState.AddModelError("", "Bad request");
-                return StatusCode(400);
-            }*/
             if (!_opremaRepository.OpremaExist(updateOprema.OpremaId))
             {
                 ModelState.AddModelError("", "Not found");
@@ -177,5 +172,27 @@ namespace RoomProcess.Controllers
             }
             return NoContent();
         }
+        //Posebni GET zahtevi
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [HttpGet("byObjekat/objekatId")]
+        //[Authorize]
+        public ActionResult GetOpremaByIdObjekat(int objekatId)
+        {
+            var opreme = _opremaRepository.GetOpremaByIdObjekat(objekatId);
+
+            if (!opreme.Any())
+            {
+                return NotFound("Objekat with this ID has not been assigned to any Oprema");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Bad request");
+            }
+
+            return Ok(opreme);
+
+        }
+        //
     }
 }

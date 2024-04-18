@@ -11,5 +11,6 @@ namespace RoomProcess.InterfaceRepository
         bool UpdateOprema(Oprema oprema);
         bool DeleteOprema(Oprema oprema);
         bool Save();
+        ICollection<Oprema> GetOpremaByIdObjekat(int objekatId);
     }
 }

@@ -11,5 +11,7 @@ namespace RoomProcess.InterfaceRepository
         bool UpdateRecenzija(Recenzija recenzija);
         bool DeleteRecenzija(Recenzija recenzija);
         bool Save();
+        ICollection<Recenzija> GetRecenzijaByIdKorisnik(int korisnikId);
+        ICollection<Recenzija> GetRecenzijaByIdRezervacija(int rezervacijaId);
     }
 }

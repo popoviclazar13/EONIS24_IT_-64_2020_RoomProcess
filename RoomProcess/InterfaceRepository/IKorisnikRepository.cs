@@ -11,6 +11,6 @@ namespace RoomProcess.InterfaceRepository
         bool UpdateKorisnik(Korisnik korisnik);
         bool DeleteKorisnik(Korisnik korisnik);
         bool Save();
-
+        ICollection<Korisnik> GetKorisnikByIdUloga(int ulogaId);
     }
 }

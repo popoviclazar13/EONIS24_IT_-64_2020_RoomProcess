@@ -57,5 +57,11 @@ namespace RoomProcess.Repository
             _dataContext.Update(korisnik);
             return Save();
         }
+        //Posebne metode za strane kljuceve
+        public ICollection<Korisnik> GetKorisnikByIdUloga(int ulogaId)
+        {
+            return _dataContext.Korisnik.Where(r => r.UlogaId == ulogaId).ToList();
+        }
+        //
     }
 }

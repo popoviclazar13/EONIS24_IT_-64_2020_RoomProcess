@@ -56,5 +56,11 @@ namespace RoomProcess.Repository
             _dataContext.Update(oprema);
             return Save();
         }
+        //Posebne metode za strane kljuceve
+        public ICollection<Oprema> GetOpremaByIdObjekat(int objekatId)
+        {
+            return _dataContext.Oprema.Where(r => r.ObjekatId == objekatId).ToList();
+        }
+        //
     }
 }

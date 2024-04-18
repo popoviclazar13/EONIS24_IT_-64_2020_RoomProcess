@@ -59,5 +59,19 @@ namespace RoomProcess.Repository
             _dataContext.Update(objekat);
             return Save();
         }
+        //Posebne metode za strane kljuceve
+        public ICollection<Objekat> GetObjekatByIdKorisnik(int korisnikId)
+        {
+            return _dataContext.Objekat.Where(r => r.KorisnikId == korisnikId).ToList();
+        }
+        public ICollection<Objekat> GetObjekatByIdTipObjekta(int tipObjektaId)
+        {
+            return _dataContext.Objekat.Where(r => r.TipObjektaId == tipObjektaId).ToList();
+        }
+        public ICollection<Objekat> GetObjekatByIdPopust(int popustId)
+        {
+            return _dataContext.Objekat.Where(r => r.PopustId == popustId).ToList();
+        }
+        //
     }
 }
