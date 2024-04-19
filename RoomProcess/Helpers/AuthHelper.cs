@@ -29,8 +29,8 @@ namespace RoomProcess.Helpers
         {
             List<Claim> claims = new List<Claim>
             {
-                new Claim("Username", korisnik.Email),
-                new Claim("UserId", korisnik.KorisnikId.ToString()),
+                new Claim(JwtRegisteredClaimNames.Email, korisnik.Email),
+                //new Claim("UserId", korisnik.KorisnikId.ToString()),
                 new Claim("Role", GetRole(korisnik))
             };
 
@@ -39,14 +39,24 @@ namespace RoomProcess.Helpers
 
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
-            var token = new JwtSecurityToken(
+            /*var token = new JwtSecurityToken(
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(10),
-                signingCredentials: creds);
+                expires: DateTime.Now.AddMinutes(10),//traje 10 minuta
+                signingCredentials: creds);*/
 
-            var jwt = new JwtSecurityTokenHandler().WriteToken(token);
+            var tokenDeskriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(claims),
+                Expires = DateTime.Now.AddDays(7), //kolko dana traje
+                SigningCredentials = creds,
+                Issuer = _config["AppSettings:Issuer"]
+            };
 
-            return jwt;
+            var tokenHandler = new JwtSecurityTokenHandler();
+
+            var token = tokenHandler.CreateToken(tokenDeskriptor);
+
+            return tokenHandler.WriteToken(token);
         }
 
         public string GetClaim(string token, string claimType)

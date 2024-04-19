@@ -26,17 +26,28 @@ namespace RoomProcess.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpGet]
         //[Authorize]
-        public ActionResult GetRecenzijas()
+        public ActionResult GetRecenzijas(int pageNumber = 1, int pageSize = 10)
         {
-            var recenzijas = _mapper.Map<List<RecenzijaDTO>>(_recenzijaRepository.GetRecenzijas());
+            /* var recenzijas = _mapper.Map<List<RecenzijaDTO>>(_recenzijaRepository.GetRecenzijas());
 
-            if (!ModelState.IsValid)
-            {
-                ModelState.AddModelError("", "Bad request");
-                return StatusCode(400);
+             if (!ModelState.IsValid)
+             {
+                 ModelState.AddModelError("", "Bad request");
+                 return StatusCode(400);
 
-            }
-            return Ok(recenzijas);
+             }
+             return Ok(recenzijas);*/
+            var recenzijas = _recenzijaRepository.GetRecenzijas()
+                 .Skip((pageNumber - 1) * pageSize)
+                 .Take(pageSize)
+                 .ToList();
+
+            var recenzijasDTO = _mapper.Map<List<RecenzijaDTO>>(recenzijas);
+
+            if (recenzijasDTO.Count == 0)
+                return NotFound("No recenzijas found");
+
+            return Ok(recenzijasDTO);
         }
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]

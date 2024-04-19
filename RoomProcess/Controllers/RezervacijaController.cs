@@ -75,15 +75,11 @@ namespace RoomProcess.Controllers
         //[AuthRole("Role", "Admin")]
         public ActionResult<Rezervacija> CreateRezervacija([FromBody] RezervacijaCreateDTO rezervacijaCreate)
         {
-
+            /*
             if (rezervacijaCreate == null)
             {
                 return BadRequest(rezervacijaCreate);
             }
-            /*if (aranzmanCreate.AranzmanID > 0)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError);
-            }*/
             var rezervacija = _rezervacijaRepository.GetRezervacijas().Where(a => a.RezervacijaId == rezervacijaCreate.RezervacijaId).FirstOrDefault();
 
             if (rezervacija != null)
@@ -105,7 +101,49 @@ namespace RoomProcess.Controllers
                 ModelState.AddModelError("", "Something went wrong while saving");
             }
 
-            return Ok("Successfully created");
+            return Ok("Successfully created");*/
+            if (rezervacijaCreate == null)
+            {
+                return BadRequest(rezervacijaCreate);
+            }
+
+            // Mapiranje DTO objekta na domenski objekat
+            var rezervacijaMap = _mapper.Map<Rezervacija>(rezervacijaCreate);
+
+            // Provera preklapanja datuma rezervacije za isti objekat
+            var existingReservation = _rezervacijaRepository.GetRezervacijas().FirstOrDefault(r =>
+                r.ObjekatId == rezervacijaMap.ObjekatId &&
+                r.DatumDolaska < rezervacijaMap.DatumOdlaska &&
+                r.DatumOdlaska > rezervacijaMap.DatumDolaska);
+
+            if (existingReservation != null)
+            {
+                ModelState.AddModelError("", "Datum rezervacije se preklapa sa postojećom rezervacijom za isti objekat.");
+                return BadRequest(ModelState);
+            }
+
+            // Provera višestrukih rezervacija korisnika za isti vremenski period u istom hotelu
+            var userReservations = _rezervacijaRepository.GetRezervacijas().Where(r =>
+                r.KorisnikId == rezervacijaMap.KorisnikId &&
+                r.ObjekatId == rezervacijaMap.ObjekatId &&
+                r.DatumDolaska < rezervacijaMap.DatumOdlaska &&
+                r.DatumOdlaska > rezervacijaMap.DatumDolaska)
+                .ToList();
+
+            if (userReservations.Any())
+            {
+                ModelState.AddModelError("", "Korisnik već ima rezervaciju za isti vremenski period u istom hotelu.");
+                return BadRequest(ModelState);
+            }
+
+            // Dodavanje rezervacije u repozitorijum
+            if (_rezervacijaRepository.CreateRezervacija(rezervacijaMap))
+            {
+                ModelState.AddModelError("", "Došlo je do greške pri čuvanju rezervacije.");
+                return StatusCode(500);
+            }
+
+            return Ok("Rezervacija uspešno kreirana.");
         }
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]

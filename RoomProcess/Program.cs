@@ -1,10 +1,13 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using RoomProcess.Data;
 using RoomProcess.Helpers;
 using RoomProcess.InterfaceRepository;
 using RoomProcess.Profiles;
 using RoomProcess.Repository;
 using RoomProcess.Services.KorisnikService;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,14 +18,14 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-//ZA BAZU MAJMUNE
+//ZA BAZU 
 builder.Services.AddDbContext<DataContext>(options => 
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 //
 
-// MORA MAJMUNE!!!
+// Scope!!!
 builder.Services.AddScoped<IKorisnikRepository, KorisnikRepository>();
 builder.Services.AddScoped<IUlogaRepository, UlogaRepository>();
 builder.Services.AddScoped<IObjekatRepository, ObjekatRepository>();
@@ -32,6 +35,29 @@ builder.Services.AddScoped<IRezervacijaRepository, RezervacijaRepository>();
 builder.Services.AddScoped<IPopustRepository, PopustRepository>();
 builder.Services.AddScoped<IOpremaRepository, OpremaRepository>();
 builder.Services.AddScoped<IKorisnikService, KorisnikService>();
+//
+
+//Token
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultForbidScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8
+                .GetBytes(builder.Configuration.GetSection("AppSettings:Token").Value)),
+            ValidateIssuer = true,//bilo false
+            ValidIssuer= builder.Configuration.GetSection("AppSettings:Issuer").Value,
+            ValidateAudience = false
+        };
+
+    });
 //
 
 //HELPER
