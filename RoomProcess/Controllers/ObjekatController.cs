@@ -4,6 +4,7 @@ using RoomProcess.InterfaceRepository;
 using RoomProcess.Models.DTO;
 using RoomProcess.Models.Entities;
 using RoomProcess.Repository;
+using System;
 
 namespace RoomProcess.Controllers
 {
@@ -25,9 +26,21 @@ namespace RoomProcess.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpGet]
-        public ActionResult GetObjekats()
+        public ActionResult GetObjekats(int pageNumber = 1, int pageSize = 10)
         {
-            var objekats = _mapper.Map<List<ObjekatDTO>>(_objekatRepository.GetObjekats());
+            var objekts = _objekatRepository.GetObjekats()
+                 .Skip((pageNumber - 1) * pageSize)
+                 .Take(pageSize)
+                 .ToList();
+
+            var objekatsDTO = _mapper.Map<List<ObjekatDTO>>(objekts);
+
+            if (objekatsDTO.Count == 0)
+                return NotFound("No objekat found");
+
+            return Ok(objekatsDTO);
+
+            /*var objekats = _mapper.Map<List<ObjekatDTO>>(_objekatRepository.GetObjekats());
 
             if (!ModelState.IsValid)
             {
@@ -35,7 +48,7 @@ namespace RoomProcess.Controllers
                 return StatusCode(400);
 
             }
-            return Ok(objekats);
+            return Ok(objekats);*/
         }
         [HttpGet("{objekatId}")]
         //[Authorize]
@@ -60,12 +73,13 @@ namespace RoomProcess.Controllers
             {
                 return BadRequest(objekatCreateDTO);
             }
-            var objekat = _objekatRepository.GetObjekats().Where(u => u.ObjekatId == objekatCreateDTO.ObjekatId).FirstOrDefault();
 
-            if (objekat != null)
+            var existingObjekat = _objekatRepository.GetObjekats().FirstOrDefault(u => u.ObjekatNaziv == objekatCreateDTO.ObjekatNaziv);
+
+            if (existingObjekat != null)
             {
-                ModelState.AddModelError("", "Objekat already exists");
-                return StatusCode(422);
+                ModelState.AddModelError("", "Objekat with the same name already exists.");
+                return StatusCode(422, "Objekat with the same name already exists.");
             }
 
             if (!ModelState.IsValid)
@@ -147,8 +161,59 @@ namespace RoomProcess.Controllers
             return NoContent();
         }
         //Posebni GET zahtevi
+        //Ovaj HttpGet je vezan za pretragu po gradovima
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [HttpGet("byKorisnik/korisnikId")]
+        [HttpGet("byGrad/{grad}")]
+        public IActionResult GetObjekatByGrad(string grad)
+        {
+            var objekat = _objekatRepository.GetObjekatByGrad(grad);
+            if (objekat == null)
+            {
+                return NotFound("There is no Objekat in the requested Grad");
+            }
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Bad request");
+            }
+
+            return Ok(objekat);
+        }
+        //Ovaj Httpget je vezan za pretragu po nazivu
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [HttpGet("byNaziv/{naziv}")]
+        public IActionResult GetObjekatByNaziv(string naziv)
+        {
+            var objekat = _objekatRepository.GetObjekatByNaziv(naziv);
+            if (objekat == null)
+            {
+                return NotFound("There is no Objekat with that Naziv");
+            }
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Bad request");
+            }
+
+            return Ok(objekat);
+        }
+        //Ovaj Httpget je vezan za pretragu po priceRange
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [HttpGet("priceRange")]
+        public IActionResult GetObjekatByPriceRange([FromQuery] int cenaDonja, [FromQuery] int cenaGornja)
+        {
+            var objekti = _objekatRepository.GetObjekatByPriceRange(cenaDonja, cenaGornja);
+            if (objekti == null)
+            {
+                return NotFound("There is no Objekat with that price Range");
+            }
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Bad request");
+            }
+
+            return Ok(objekti);
+        }
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [HttpGet("byKorisnik/{korisnikId}")]
         //[Authorize]
         public ActionResult GetObjekatByIdKorisnik(int korisnikId)
         {

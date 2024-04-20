@@ -25,17 +25,19 @@ namespace RoomProcess.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpGet]
-        public ActionResult GetPopusts()
+        public ActionResult GetPopusts(int pageNumber = 1, int pageSize = 10)
         {
-            var popusts = _mapper.Map<List<PopustDTO>>(_popustRepository.GetPopusts());
+            var popusts = _popustRepository.GetPopusts()
+                 .Skip((pageNumber - 1) * pageSize)
+                 .Take(pageSize)
+                 .ToList();
 
-            if (!ModelState.IsValid)
-            {
-                ModelState.AddModelError("", "Bad request");
-                return StatusCode(400);
+            var popustsDTO = _mapper.Map<List<PopustDTO>>(popusts);
 
-            }
-            return Ok(popusts);
+            if (popustsDTO.Count == 0)
+                return NotFound("No popust found");
+
+            return Ok(popustsDTO);
         }
 
         [HttpGet("{popustId}")]

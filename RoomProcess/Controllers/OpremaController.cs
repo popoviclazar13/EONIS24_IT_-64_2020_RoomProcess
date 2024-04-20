@@ -28,8 +28,21 @@ namespace RoomProcess.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult GetOpremas()
+        public IActionResult GetOpremas(int pageNumber = 1, int pageSize = 10)
         {
+            var opremas = _opremaRepository.GetOpremas()
+                 .Skip((pageNumber - 1) * pageSize)
+                 .Take(pageSize)
+                 .ToList();
+
+            var opremasDTO = _mapper.Map<List<OpremaDTO>>(opremas);
+
+            if (opremasDTO.Count == 0)
+                return NotFound("No oprema found");
+
+            return Ok(opremasDTO);
+
+            /*
             var opremass = _mapper.Map<List<OpremaDTO>>(_opremaRepository.GetOpremas());
 
             if (!ModelState.IsValid)
@@ -39,7 +52,7 @@ namespace RoomProcess.Controllers
 
             }
 
-            return Ok(opremass);
+            return Ok(opremass);*/
         }
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]

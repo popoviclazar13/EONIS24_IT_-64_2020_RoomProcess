@@ -31,17 +31,19 @@ namespace RoomProcess.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpGet]
         //[Authorize]
-        public ActionResult GetUlogas()
+        public ActionResult GetUlogas(int pageNumber = 1, int pageSize = 10)
         {
-            var ulogas = _mapper.Map<List<UlogaDTO>>(_ulogaRepository.GetUlogas());
+            var ulogas = _ulogaRepository.GetUlogas()
+                 .Skip((pageNumber - 1) * pageSize)
+                 .Take(pageSize)
+                 .ToList();
 
-            if (!ModelState.IsValid)
-            {
-                ModelState.AddModelError("", "Bad request");
-                return StatusCode(400);
+            var ulogasDTO = _mapper.Map<List<UlogaDTO>>(ulogas);
 
-            }
-            return Ok(ulogas);
+            if (ulogasDTO.Count == 0)
+                return NotFound("No uloga found");
+
+            return Ok(ulogasDTO);
         }
 
         [HttpGet("{ulogaId}")]

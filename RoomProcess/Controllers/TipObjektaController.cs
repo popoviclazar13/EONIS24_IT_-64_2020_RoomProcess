@@ -26,17 +26,19 @@ namespace RoomProcess.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpGet]
         //[Authorize]
-        public ActionResult GetTipObjektas()
+        public ActionResult GetTipObjektas(int pageNumber = 1, int pageSize = 10)
         {
-            var tipObjektas = _mapper.Map<List<TipObjektaDTO>>(_tipObjektaRepository.GetTipObjektas());
+            var tipObjektas = _tipObjektaRepository.GetTipObjektas()
+                 .Skip((pageNumber - 1) * pageSize)
+                 .Take(pageSize)
+                 .ToList();
 
-            if (!ModelState.IsValid)
-            {
-                ModelState.AddModelError("", "Bad request");
-                return StatusCode(400);
+            var tipObjektasDTO = _mapper.Map<List<TipObjektaDTO>>(tipObjektas);
 
-            }
-            return Ok(tipObjektas);
+            if (tipObjektasDTO.Count == 0)
+                return NotFound("No tipObjekta found");
+
+            return Ok(tipObjektasDTO);
         }
         [HttpGet("{tipObjektaId}")]
         //[Authorize]

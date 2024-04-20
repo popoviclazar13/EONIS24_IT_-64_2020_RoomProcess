@@ -14,11 +14,16 @@ namespace RoomProcess.Controllers
     {
         private readonly IRezervacijaRepository _rezervacijaRepository;
         private readonly IMapper _mapper;
+        //Zbog racunanja ukupne cene 
+        private readonly IObjekatRepository _objekatRepository;
+        private readonly IPopustRepository _opustRepository;
 
-        public RezervacijaController(IRezervacijaRepository rezervacijaRepository, IMapper mapper)
+        public RezervacijaController(IRezervacijaRepository rezervacijaRepository, IMapper mapper, IObjekatRepository objekatRepository, IPopustRepository opustRepository)
         {
             _rezervacijaRepository = rezervacijaRepository;
             _mapper = mapper;
+            _objekatRepository = objekatRepository;
+            _opustRepository = opustRepository;
         }
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -27,18 +32,19 @@ namespace RoomProcess.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult GetRezervacijas()
+        public IActionResult GetRezervacijas(int pageNumber = 1, int pageSize = 10)
         {
-            var rezervacijas = _mapper.Map<List<RezervacijaDTO>>(_rezervacijaRepository.GetRezervacijas());
+            var rezervacijas = _rezervacijaRepository.GetRezervacijas()
+                 .Skip((pageNumber - 1) * pageSize)
+                 .Take(pageSize)
+                 .ToList();
 
-            if (!ModelState.IsValid)
-            {
-                ModelState.AddModelError("", "Bad request");
-                return StatusCode(400);
+            var rezervacijasDTO = _mapper.Map<List<RezervacijaDTO>>(rezervacijas);
 
-            }
+            if (rezervacijasDTO.Count == 0)
+                return NotFound("No rezervacija found");
 
-            return Ok(rezervacijas);
+            return Ok(rezervacijasDTO);
         }
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -75,33 +81,7 @@ namespace RoomProcess.Controllers
         //[AuthRole("Role", "Admin")]
         public ActionResult<Rezervacija> CreateRezervacija([FromBody] RezervacijaCreateDTO rezervacijaCreate)
         {
-            /*
-            if (rezervacijaCreate == null)
-            {
-                return BadRequest(rezervacijaCreate);
-            }
-            var rezervacija = _rezervacijaRepository.GetRezervacijas().Where(a => a.RezervacijaId == rezervacijaCreate.RezervacijaId).FirstOrDefault();
-
-            if (rezervacija != null)
-            {
-                ModelState.AddModelError("", "Rezervacija already exists");
-                return StatusCode(422);
-            }
-
-            if (!ModelState.IsValid)
-            {
-                ModelState.AddModelError("", "Bad request");
-                return StatusCode(400);
-            }
-
-            var rezervacijaMap = _mapper.Map<Rezervacija>(rezervacijaCreate);
-
-            if (!_rezervacijaRepository.CreateRezervacija(rezervacijaMap))
-            {
-                ModelState.AddModelError("", "Something went wrong while saving");
-            }
-
-            return Ok("Successfully created");*/
+            
             if (rezervacijaCreate == null)
             {
                 return BadRequest(rezervacijaCreate);
@@ -109,6 +89,37 @@ namespace RoomProcess.Controllers
 
             // Mapiranje DTO objekta na domenski objekat
             var rezervacijaMap = _mapper.Map<Rezervacija>(rezervacijaCreate);
+
+            //Racunanje broja nocenja
+            TimeSpan trajanjeBoravka = rezervacijaMap.DatumOdlaska - rezervacijaMap.DatumDolaska;
+            rezervacijaMap.BrojNocenja = (int)trajanjeBoravka.TotalDays;
+
+            //Za racunanje cene
+            var objekat = _objekatRepository.GetObjekatById((int)rezervacijaMap.ObjekatId);
+            if (objekat == null)
+            {
+                ModelState.AddModelError("", "Objekat nije pronađen.");
+                return NotFound(ModelState);
+            }
+            //Ovo je za obracunavanje popusta
+            if (objekat.Popust != null)
+            {
+                // Ako postoji popust, primenite ga na cenu rezervacije
+                decimal popustIznos = objekat.Popust.PopustIznos;
+                decimal popustProcenat = popustIznos / 100;
+
+                decimal cenaBezPopusta = rezervacijaMap.BrojNocenja * objekat.Cena;
+                decimal iznosPopusta = cenaBezPopusta * popustProcenat;
+                decimal cenaSaPopustom = cenaBezPopusta - iznosPopusta;
+
+                rezervacijaMap.Cena = (int)cenaSaPopustom;
+            }
+            else
+            {
+                // Ako ne postoji popust, cena će biti cena bez popusta
+                rezervacijaMap.Cena = rezervacijaMap.BrojNocenja * objekat.Cena;
+            }
+            //
 
             // Provera preklapanja datuma rezervacije za isti objekat
             var existingReservation = _rezervacijaRepository.GetRezervacijas().FirstOrDefault(r =>
@@ -123,7 +134,7 @@ namespace RoomProcess.Controllers
             }
 
             // Provera višestrukih rezervacija korisnika za isti vremenski period u istom hotelu
-            var userReservations = _rezervacijaRepository.GetRezervacijas().Where(r =>
+            /*var userReservations = _rezervacijaRepository.GetRezervacijas().Where(r =>
                 r.KorisnikId == rezervacijaMap.KorisnikId &&
                 r.ObjekatId == rezervacijaMap.ObjekatId &&
                 r.DatumDolaska < rezervacijaMap.DatumOdlaska &&
@@ -134,7 +145,7 @@ namespace RoomProcess.Controllers
             {
                 ModelState.AddModelError("", "Korisnik već ima rezervaciju za isti vremenski period u istom hotelu.");
                 return BadRequest(ModelState);
-            }
+            }*/
 
             // Dodavanje rezervacije u repozitorijum
             if (_rezervacijaRepository.CreateRezervacija(rezervacijaMap))

@@ -30,8 +30,11 @@ namespace RoomProcess.Helpers
             List<Claim> claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Email, korisnik.Email),
-                //new Claim("UserId", korisnik.KorisnikId.ToString()),
-                new Claim("Role", GetRole(korisnik))
+                new Claim(JwtRegisteredClaimNames.Name, korisnik.Ime),
+                new Claim(ClaimTypes.Role, GetRole(korisnik)),
+                new Claim("UserId", korisnik.KorisnikId.ToString()),
+                //new Claim("Role", GetRole(korisnik))
+                new Claim(ClaimTypes.Role, GetRole(korisnik))
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
@@ -39,33 +42,60 @@ namespace RoomProcess.Helpers
 
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
-            /*var token = new JwtSecurityToken(
+            var token = new JwtSecurityToken(
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(10),//traje 10 minuta
-                signingCredentials: creds);*/
+                expires: DateTime.Now.AddDays(10),//traje 10 dana
+                signingCredentials: creds);
 
-            var tokenDeskriptor = new SecurityTokenDescriptor
+            var jwt = new JwtSecurityTokenHandler().WriteToken(token);
+
+            return jwt;
+
+            /*var tokenDeskriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.Now.AddDays(7), //kolko dana traje
                 SigningCredentials = creds,
                 Issuer = _config["AppSettings:Issuer"]
-            };
+            };*/
 
-            var tokenHandler = new JwtSecurityTokenHandler();
+            /*var tokenHandler = new JwtSecurityTokenHandler();
 
             var token = tokenHandler.CreateToken(tokenDeskriptor);
 
-            return tokenHandler.WriteToken(token);
+            return tokenHandler.WriteToken(token);*/
         }
 
         public string GetClaim(string token, string claimType)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var securityToken = tokenHandler.ReadToken(token) as JwtSecurityToken;
-
-            var claimValue = securityToken.Claims.First(claim => claim.Type == claimType).Value;
-            return claimValue;
+            var clamVariable = securityToken.Claims;
+            //
+            if (securityToken.Claims.Count() == 0)
+            {
+                // Lista claim-ova je prazna
+                Console.WriteLine("Lista claim-ova je prazna.");
+            }
+            else
+            {
+                // Lista claim-ova nije prazna
+                Console.WriteLine($"Lista claim-ova sadrži {securityToken.Claims.Count()} claim-ova.");
+            }
+            //
+            //var claimValue = securityToken.Claims.First(claim => claim.Type == claimType).Value;
+            var claim = securityToken.Claims.FirstOrDefault(claim => claim.Type == claimType);
+            if (claim != null)
+            {
+                var claimValue = claim.Value;
+                return claimValue;
+                // Nastavite sa radom sa claimValue
+            }
+            else
+            {
+                return claimType;
+            }
+            //return claimValue;
         }
 
         public bool ValidateCurrentToken(string token)
@@ -82,7 +112,8 @@ namespace RoomProcess.Helpers
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = key,
                     ValidateIssuer = false,
-                    ValidateAudience = false
+                    ValidateAudience = false,
+                    RequireExpirationTime = false //MOrali izmeniti
                 }, out SecurityToken validatedToken);
             }
             catch

@@ -31,13 +31,13 @@ namespace RoomProcess.Helpers
                         var roleArray = _claim.Value.Split(',');
                         foreach (var role in roleArray)
                         {
-                            if (role == claimValue)
+                            if (role == claimValue)//claimValue
                                 return;
                         }
                     }
                     else
                     {
-                        var KorisnikID = context.HttpContext.Request.RouteValues["id"];
+                        var KorisnikID = context.HttpContext.Request.RouteValues["korisnikId"];
                         if (KorisnikID.Equals(claimValue))
                             return;
                     }

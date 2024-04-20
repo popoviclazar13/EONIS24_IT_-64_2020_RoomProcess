@@ -13,11 +13,13 @@ namespace RoomProcess.Controllers
     {
         private readonly IRecenzijaRepository _recenzijaRepository;
         private readonly IMapper _mapper;
+        private readonly IRezervacijaRepository _rezervacijaRepository;
 
-        public RecenzijaController(IRecenzijaRepository recenzijaRepository, IMapper mapper)
+        public RecenzijaController(IRecenzijaRepository recenzijaRepository, IMapper mapper, IRezervacijaRepository rezervacijaRepository)
         {
             _recenzijaRepository = recenzijaRepository;
             _mapper = mapper;
+            _rezervacijaRepository = rezervacijaRepository;
         }
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -45,7 +47,7 @@ namespace RoomProcess.Controllers
             var recenzijasDTO = _mapper.Map<List<RecenzijaDTO>>(recenzijas);
 
             if (recenzijasDTO.Count == 0)
-                return NotFound("No recenzijas found");
+                return NotFound("No recenzija found");
 
             return Ok(recenzijasDTO);
         }
@@ -89,10 +91,14 @@ namespace RoomProcess.Controllers
             {
                 return BadRequest(recenzijaCreate);
             }
-            /*if (aranzmanCreate.AranzmanID > 0)
+
+            var rezervacija = _rezervacijaRepository.GetRezervacijaById(recenzijaCreate.RezervacijaId);
+            if (rezervacija == null || rezervacija.KorisnikId != recenzijaCreate.KorisnikId)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError);
-            }*/
+                ModelState.AddModelError("", "Korisnik nema vezanu rezervaciju.");
+                return StatusCode(422, "Korisnik nema vezanu rezervaciju.");
+            }
+
             var recenzija = _recenzijaRepository.GetRecenzijas().Where(a => a.RecenzijaId == recenzijaCreate.RecenzijaId).FirstOrDefault();
 
             if (recenzija != null)

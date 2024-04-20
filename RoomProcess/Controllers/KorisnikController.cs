@@ -85,14 +85,14 @@ namespace RoomProcess.Controllers
             return Ok(_korisnikService.CreateKorisnik(korisnik));
         }
 
-        [HttpPut("korisnikId")]
+        [HttpPut("korisnikId")]//mora da se salje 
         [AuthRole("Role", "Admin")]
         public ActionResult UpdateKorisnik(int korisnikId, KorisnikRequestDTO data)
         {
             return Ok(_korisnikService.UpdateKorisnik(korisnikId, data));
         }
 
-        [HttpDelete("korisnikId")]
+        [HttpDelete("{korisnikId}")]
         [AuthRole("Role", "Admin")]
         public ActionResult DeleteKorisnik(int korisnikId)
         {

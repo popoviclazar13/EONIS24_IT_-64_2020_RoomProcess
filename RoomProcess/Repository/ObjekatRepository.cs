@@ -72,6 +72,23 @@ namespace RoomProcess.Repository
         {
             return _dataContext.Objekat.Where(r => r.PopustId == popustId).ToList();
         }
+
+        //
+        //Metoda za pretrazivanje po gradovima, nazivu, priceRange
+        public ICollection<Objekat> GetObjekatByGrad(string grad)
+        {
+            return _dataContext.Objekat.Where(k => k.Grad == grad).ToList();
+        }
+
+        public Objekat GetObjekatByNaziv(string naziv)
+        {
+            return _dataContext.Objekat.Where(k => k.ObjekatNaziv == naziv).FirstOrDefault();
+        }
+
+        public ICollection<Objekat> GetObjekatByPriceRange(int cenaDonja, int cenaGornja)
+        {
+            return _dataContext.Objekat.Where(o => o.Cena >= cenaDonja && o.Cena <= cenaGornja).ToList();
+        }
         //
     }
 }

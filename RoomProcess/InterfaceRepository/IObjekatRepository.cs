@@ -11,6 +11,9 @@ namespace RoomProcess.InterfaceRepository
         bool UpdateObjekat(Objekat objekat);
         bool DeleteObjekat(Objekat objekat);
         bool Save();
+        Objekat GetObjekatByNaziv(string naziv);
+        ICollection<Objekat> GetObjekatByPriceRange(int cenaDonja, int cenaGornja);
+        ICollection<Objekat> GetObjekatByGrad(string grad);
         ICollection<Objekat> GetObjekatByIdKorisnik(int korisnikId);
         ICollection<Objekat> GetObjekatByIdTipObjekta(int tipObjektaId);
         ICollection<Objekat> GetObjekatByIdPopust(int popustId);
