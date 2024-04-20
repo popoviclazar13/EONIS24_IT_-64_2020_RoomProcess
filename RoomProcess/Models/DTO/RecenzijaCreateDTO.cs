@@ -12,7 +12,7 @@ namespace RoomProcess.Models.DTO
         public int Osoblje { get; set; }
         public int Sadrzaj { get; set; }
         public int CenaKvalitet { get; set; } // ODNOS CENE I KVALITETA
-        public int Ocena { get; set; }
+        //public int Ocena { get; set; }
         public int KorisnikId { get; set; }
         public int RezervacijaId { get; set; }
     }

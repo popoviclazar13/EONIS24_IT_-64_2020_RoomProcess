@@ -11,8 +11,8 @@ namespace RoomProcess.Models.DTO
         public int BrojNocenja { get; set; }
         public int Potvrda { get; set; }
         public int KorisnikId { get; set; }
-        public KorisnikDTO korisnikDTO { get; set; }
+        //public KorisnikDTO korisnikDTO { get; set; }
         public int ObjekatId { get; set; }
-        public ObjekatDTO objekatDTO { get; set; }
+        //public ObjekatDTO objekatDTO { get; set; }
     }
 }

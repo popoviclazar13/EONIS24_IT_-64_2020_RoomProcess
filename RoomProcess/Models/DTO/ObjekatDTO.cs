@@ -15,10 +15,10 @@ namespace RoomProcess.Models.DTO
         //public ICollection<Slika> Slike { get; set; } ZA SADA
         public int x { get; set; }
         public int y { get; set; }
-        public KorisnikDTO korisnikDTO { get; set; }
+        //public KorisnikDTO korisnikDTO { get; set; }
         public int TipObjektaId { get; set; }
-        public TipObjektaDTO tipObjektaDTO { get; set; }
+        //public TipObjektaDTO tipObjektaDTO { get; set; }
         public int PopustId { get; set; }
-        public PopustDTO popustDTO { get; set; }
+        //public PopustDTO popustDTO { get; set; }
     }
 }

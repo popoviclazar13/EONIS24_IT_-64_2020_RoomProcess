@@ -31,7 +31,7 @@ namespace RoomProcess.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpGet]
         //[Authorize]
-        public ActionResult GetKorisniks(int pageNumber = 1, int pageSize = 2)
+        public ActionResult GetKorisniks(int pageNumber = 1, int pageSize = 10)
         {
             var korisniks = _korisnikRepository.GetKorisniks()
                  .Skip((pageNumber - 1) * pageSize)
