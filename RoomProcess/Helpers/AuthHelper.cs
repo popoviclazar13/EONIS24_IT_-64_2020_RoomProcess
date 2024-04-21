@@ -29,12 +29,12 @@ namespace RoomProcess.Helpers
         {
             List<Claim> claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.Email, korisnik.Email),
-                new Claim(JwtRegisteredClaimNames.Name, korisnik.Ime),
+                new Claim(ClaimTypes.Email, korisnik.Email),    //JwtRegisteredClaimNames.Email
+                new Claim(ClaimTypes.Name, korisnik.Ime),
                 new Claim(ClaimTypes.Role, GetRole(korisnik)),
                 new Claim("UserId", korisnik.KorisnikId.ToString()),
                 //new Claim("Role", GetRole(korisnik))
-                new Claim(ClaimTypes.Role, GetRole(korisnik))
+                //new Claim(ClaimTypes.Role, GetRole(korisnik))
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(

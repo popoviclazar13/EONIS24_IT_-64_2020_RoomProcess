@@ -16,7 +16,7 @@ namespace RoomProcess.Repository
         public bool CreateRecenzija(Recenzija recenzija)
         {
             //Dodato da racuna prosecnu ocenu
-            int sumaOcena = (recenzija.Lokacija + recenzija.Cistoca + recenzija.Osoblje + recenzija.Sadrzaj + recenzija.CenaKvalitet) / 5;
+            double sumaOcena = ((double)recenzija.Lokacija + recenzija.Cistoca + recenzija.Osoblje + recenzija.Sadrzaj + recenzija.CenaKvalitet) / 5;
 
             // Upisivanje sume u atribut Ocena
             recenzija.Ocena = sumaOcena;
@@ -61,6 +61,11 @@ namespace RoomProcess.Repository
 
         public bool UpdateRecenzija(Recenzija recenzija)
         {
+            double sumaOcena = ((double)recenzija.Lokacija + recenzija.Cistoca + recenzija.Osoblje + recenzija.Sadrzaj + recenzija.CenaKvalitet) / 5;
+
+            // Upisivanje sume u atribut Ocena
+            recenzija.Ocena = sumaOcena;
+
             _dataContext.Update(recenzija);
             return Save();
         }

@@ -14,7 +14,7 @@ namespace RoomProcess.Models.Entities
         public int Osoblje { get; set; }
         public int Sadrzaj {  get; set; }
         public int CenaKvalitet { get; set; } // ODNOS CENE I KVALITETA
-        public int Ocena {  get; set; }
+        public double Ocena {  get; set; }
         [ForeignKey("Korisnik")]
         public int KorisnikId { get; set; }
         public Korisnik Korisnik { get; set; }

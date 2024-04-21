@@ -172,11 +172,6 @@ namespace RoomProcess.Controllers
                 return StatusCode(400);
             }
 
-            /*if (id != updateAranzman.AranzmanID)
-            {
-                ModelState.AddModelError("", "Bad request");
-                return StatusCode(400);
-            }*/
             if (!_rezervacijaRepository.RezervacijaExist(updateRezervacija.RezervacijaId))
             {
                 ModelState.AddModelError("", "Not found");
@@ -189,6 +184,36 @@ namespace RoomProcess.Controllers
             }
             var rezervacijaMap = _mapper.Map<Rezervacija>(updateRezervacija);
 
+            //Racunanje broja nocenja
+            TimeSpan trajanjeBoravka = rezervacijaMap.DatumOdlaska - rezervacijaMap.DatumDolaska;
+            rezervacijaMap.BrojNocenja = (int)trajanjeBoravka.TotalDays;
+
+            //Za racunanje cene
+            var objekat = _objekatRepository.GetObjekatById((int)rezervacijaMap.ObjekatId);
+            if (objekat == null)
+            {
+                ModelState.AddModelError("", "Objekat nije pronađen.");
+                return NotFound(ModelState);
+            }
+            //Ovo je za obracunavanje popusta
+            if (objekat.Popust != null)
+            {
+                // Ako postoji popust, primenite ga na cenu rezervacije
+                decimal popustIznos = objekat.Popust.PopustIznos;
+                decimal popustProcenat = popustIznos / 100;
+
+                decimal cenaBezPopusta = rezervacijaMap.BrojNocenja * objekat.Cena;
+                decimal iznosPopusta = cenaBezPopusta * popustProcenat;
+                decimal cenaSaPopustom = cenaBezPopusta - iznosPopusta;
+
+                rezervacijaMap.Cena = (int)cenaSaPopustom;
+            }
+            else
+            {
+                // Ako ne postoji popust, cena će biti cena bez popusta
+                rezervacijaMap.Cena = rezervacijaMap.BrojNocenja * objekat.Cena;
+            }
+            //
 
             if (!_rezervacijaRepository.UpdateRezervacija(rezervacijaMap))
             {
