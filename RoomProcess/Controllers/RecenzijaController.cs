@@ -185,8 +185,8 @@ namespace RoomProcess.Controllers
             }
             if (_recenzijaRepository.GetRecenzijaById(recenzijaId) == null)
             {
-                ModelState.AddModelError("", "Error 500");
-                return StatusCode(500);
+                ModelState.AddModelError("", "There is no Recenzija with that Id");
+                return StatusCode(404, "There is no Recenzija with that Id");
             }
             if (!_recenzijaRepository.DeleteRecenzija(recenzija))
             {

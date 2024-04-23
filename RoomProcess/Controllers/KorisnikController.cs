@@ -85,7 +85,7 @@ namespace RoomProcess.Controllers
             return Ok(_korisnikService.CreateKorisnik(korisnik));
         }
 
-        [HttpPut("korisnikId")]//mora da se salje 
+        [HttpPut("{korisnikId}")]//mora da se salje 
         [AuthRole("Role", "Korisnik")]
         public ActionResult UpdateKorisnik(int korisnikId, KorisnikRequestDTO data)
         {
@@ -99,7 +99,7 @@ namespace RoomProcess.Controllers
             return Ok(_korisnikService.DeleteKorisnik(korisnikId));
         }
         //Posebni GET zahtevi
-        [HttpGet("byUloga/ulogaId")]
+        [HttpGet("byUloga/{ulogaId}")]
         [AuthRole("Role", "Admin")]
         public ActionResult GetKorisnikByIdUloga(int ulogaId)
         {

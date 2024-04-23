@@ -137,8 +137,8 @@ namespace RoomProcess.Controllers
             }
             if (_tipObjektaRepository.GetTipObjektaById(tipObjektaId) == null)
             {
-                ModelState.AddModelError("", "Error 500");
-                return StatusCode(500);
+                ModelState.AddModelError("", "There is no TipObjekta with taht Id");
+                return StatusCode(404, "There is no TipObjekta with taht Id");
             }
             if (!_tipObjektaRepository.DeleteTipObjekta(tipObjekta))
             {

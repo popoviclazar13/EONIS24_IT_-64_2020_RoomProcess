@@ -243,8 +243,8 @@ namespace RoomProcess.Controllers
             }
             if (_rezervacijaRepository.GetRezervacijaById(rezervacijaId) == null)
             {
-                ModelState.AddModelError("", "Not found");
-                return StatusCode(404);
+                ModelState.AddModelError("", "There is no Rezervacija with that Id");
+                return StatusCode(404, "There is no Rezervacija with that Id");
             }
             if (!_rezervacijaRepository.DeleteRezervacija(rezervacija))
             {
@@ -255,7 +255,7 @@ namespace RoomProcess.Controllers
         //Posebni GET zahtevi
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpGet("byKorisnik/{korisnikId}")]
-        [AuthRole("Role", "Admin, Korisnik")]
+        [AuthRole("Role", "Admin")]
         //[AuthRole("Role", "Korisnik")]
         public ActionResult GetRezervacijaByIdKorisnik(int korisnikId)
         {
@@ -277,7 +277,7 @@ namespace RoomProcess.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpGet("byObjekat/{objekatId}")]
         [AuthRole("Role", "Admin")]
-        [AuthRole("Role", "Vlasnik")]
+        //[AuthRole("Role", "Vlasnik")]
         public ActionResult GetRezervacijaByIdObjekat(int objekatId)
         {
             var rezervacije = _rezervacijaRepository.GetRezervacijaByIdObjekat(objekatId);

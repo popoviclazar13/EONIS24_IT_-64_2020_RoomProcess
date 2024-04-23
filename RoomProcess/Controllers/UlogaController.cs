@@ -144,8 +144,8 @@ namespace RoomProcess.Controllers
             }
             if (_ulogaRepository.GetUlogaById(ulogaId) == null)
             {
-                ModelState.AddModelError("", "Error 500");
-                return StatusCode(500);
+                ModelState.AddModelError("", "There is no Uloga with that Id");
+                return StatusCode(404, "There is no Uloga with that Id");
             }
             if (!_ulogaRepository.DeleteUloga(uloga))
             {

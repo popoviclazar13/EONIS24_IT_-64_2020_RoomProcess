@@ -161,8 +161,8 @@ namespace RoomProcess.Controllers
             }
             if (_opremaRepository.GetOpremaById(opremaId) == null)
             {
-                ModelState.AddModelError("", "Not found");
-                return StatusCode(404);
+                ModelState.AddModelError("", "There is not Oprema with that Id");
+                return StatusCode(404, "There is not Oprema with that Id");
             }
             if (!_opremaRepository.DeleteOprema(oprema))
             {
@@ -172,7 +172,7 @@ namespace RoomProcess.Controllers
         }
         //Posebni GET zahtevi
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [HttpGet("byObjekat/objekatId")]
+        [HttpGet("byObjekat/{objekatId}")]
         [AllowAnonymous]
         public ActionResult GetOpremaByIdObjekat(int objekatId)
         {

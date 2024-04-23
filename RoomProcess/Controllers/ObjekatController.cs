@@ -143,7 +143,7 @@ namespace RoomProcess.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpDelete("{objekatId}")]
-        [AuthRole("Role", "Admin")]
+        //[AuthRole("Role", "Admin")]
         [AuthRole("Role", "Vlasnik")]
         public IActionResult DeleteObjekat(int objekatId)
         {
@@ -157,7 +157,7 @@ namespace RoomProcess.Controllers
             if (_objekatRepository.GetObjekatById(objekatId) == null)
             {
                 ModelState.AddModelError("", "Objekat with this ID does not exist");
-                return StatusCode(404);
+                return StatusCode(404, "Objekat with this ID does not exist");
             }
             if (!_objekatRepository.DeleteObjekat(objekat))
             {
