@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using RoomProcess.Helpers;
 using RoomProcess.InterfaceRepository;
 using RoomProcess.Models.DTO;
 using RoomProcess.Models.Entities;
@@ -31,7 +32,7 @@ namespace RoomProcess.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpGet]
-        [AllowAnonymous]
+        [AuthRole("Role", "Admin")]
         public IActionResult GetRezervacijas(int pageNumber = 1, int pageSize = 10)
         {
             var rezervacijas = _rezervacijaRepository.GetRezervacijas()
@@ -52,7 +53,7 @@ namespace RoomProcess.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpGet("{rezervacijaId}")]
-        //[Authorize]
+        [AuthRole("Role", "Admin")]
 
         public IActionResult GetRezervacijaById(int rezervacijaId)
         {
@@ -78,7 +79,7 @@ namespace RoomProcess.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpPost]
-        //[AuthRole("Role", "Admin")]
+        [AuthRole("Role", "Korisnik")]
         public ActionResult<Rezervacija> CreateRezervacija([FromBody] RezervacijaCreateDTO rezervacijaCreate)
         {
             
@@ -162,7 +163,7 @@ namespace RoomProcess.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpPut]
-        //[AuthRole("Role", "Admin")]
+        [AuthRole("Role", "Korisnik")]
 
         public IActionResult UpdateRezervacija([FromBody] RezervacijaUpdateDTO updateRezervacija)
         {
@@ -229,7 +230,7 @@ namespace RoomProcess.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpDelete("{rezervacijaId}")]
-        //[AuthRole("Role", "Admin")]
+        [AuthRole("Role", "Admin")]
 
         public IActionResult DeleteRezervacija(int rezervacijaId)
         {
@@ -253,8 +254,9 @@ namespace RoomProcess.Controllers
         }
         //Posebni GET zahtevi
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [HttpGet("byKorisnik/korisnikId")]
-        //[Authorize]
+        [HttpGet("byKorisnik/{korisnikId}")]
+        [AuthRole("Role", "Admin, Korisnik")]
+        //[AuthRole("Role", "Korisnik")]
         public ActionResult GetRezervacijaByIdKorisnik(int korisnikId)
         {
             var rezervacije = _rezervacijaRepository.GetRezervacijaByIdKorisnik(korisnikId);
@@ -273,8 +275,9 @@ namespace RoomProcess.Controllers
 
         }
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [HttpGet("byObjekat/objekatId")]
-        //[Authorize]
+        [HttpGet("byObjekat/{objekatId}")]
+        [AuthRole("Role", "Admin")]
+        [AuthRole("Role", "Vlasnik")]
         public ActionResult GetRezervacijaByIdObjekat(int objekatId)
         {
             var rezervacije = _rezervacijaRepository.GetRezervacijaByIdObjekat(objekatId);

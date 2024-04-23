@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using RoomProcess.Helpers;
 using RoomProcess.InterfaceRepository;
 using RoomProcess.Models.DTO;
 using RoomProcess.Models.Entities;
@@ -26,6 +28,7 @@ namespace RoomProcess.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpGet]
+        [AllowAnonymous]
         public ActionResult GetObjekats(int pageNumber = 1, int pageSize = 10)
         {
             var objekts = _objekatRepository.GetObjekats()
@@ -51,7 +54,7 @@ namespace RoomProcess.Controllers
             return Ok(objekats);*/
         }
         [HttpGet("{objekatId}")]
-        //[Authorize]
+        [AuthRole("Role", "Admin")]
         public ActionResult GetObjekatById(int objekatId)
         {
             if (!_objekatRepository.ObjekatExist(objekatId))
@@ -67,6 +70,7 @@ namespace RoomProcess.Controllers
         }
         [HttpPost]
         //[AuthRole("Role", "Admin")]
+        [AuthRole("Role", "Vlasnik")]
         public ActionResult<Popust> CreateObjekat([FromBody] ObjekatCreateDTO objekatCreateDTO)
         {
             if (objekatCreateDTO == null)
@@ -103,7 +107,7 @@ namespace RoomProcess.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpPut]
-        //[AuthRole("Role", "Admin")]
+        [AuthRole("Role", "Vlasnik")]
 
         public IActionResult UpdateObjekat([FromBody] ObjekatUpdateDTO updateObjekat)
         {
@@ -139,7 +143,8 @@ namespace RoomProcess.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpDelete("{objekatId}")]
-        //[AuthRole("Role", "Admin")]
+        [AuthRole("Role", "Admin")]
+        [AuthRole("Role", "Vlasnik")]
         public IActionResult DeleteObjekat(int objekatId)
         {
             var objekat = _objekatRepository.GetObjekatById(objekatId);
@@ -164,6 +169,7 @@ namespace RoomProcess.Controllers
         //Ovaj HttpGet je vezan za pretragu po gradovima
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpGet("byGrad/{grad}")]
+        [AllowAnonymous]
         public IActionResult GetObjekatByGrad(string grad)
         {
             var objekat = _objekatRepository.GetObjekatByGrad(grad);
@@ -181,6 +187,7 @@ namespace RoomProcess.Controllers
         //Ovaj Httpget je vezan za pretragu po nazivu
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpGet("byNaziv/{naziv}")]
+        [AllowAnonymous]
         public IActionResult GetObjekatByNaziv(string naziv)
         {
             var objekat = _objekatRepository.GetObjekatByNaziv(naziv);
@@ -198,6 +205,7 @@ namespace RoomProcess.Controllers
         //Ovaj Httpget je vezan za pretragu po priceRange
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpGet("priceRange")]
+        [AllowAnonymous]
         public IActionResult GetObjekatByPriceRange([FromQuery] int cenaDonja, [FromQuery] int cenaGornja)
         {
             var objekti = _objekatRepository.GetObjekatByPriceRange(cenaDonja, cenaGornja);
@@ -214,7 +222,7 @@ namespace RoomProcess.Controllers
         }
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpGet("byKorisnik/{korisnikId}")]
-        //[Authorize]
+        [AllowAnonymous]
         public ActionResult GetObjekatByIdKorisnik(int korisnikId)
         {
             var objekti = _objekatRepository.GetObjekatByIdKorisnik(korisnikId);
@@ -234,8 +242,8 @@ namespace RoomProcess.Controllers
 
         }
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [HttpGet("byTipObjekta/tipObjektaId")]
-        //[Authorize]
+        [HttpGet("byTipObjekta/{tipObjektaId}")]
+        [AllowAnonymous]
         public ActionResult GetObjekatByIdTipObjekta(int tipObjektaId)
         {
             var objekti = _objekatRepository.GetObjekatByIdTipObjekta(tipObjektaId);
@@ -254,8 +262,8 @@ namespace RoomProcess.Controllers
 
         }
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [HttpGet("byPopust/popustId")]
-        //[Authorize]
+        [HttpGet("byPopust/{popustId}")]
+        [AllowAnonymous]
         public ActionResult GetObjekatByIdPopust(int popustId)
         {
             var objekti = _objekatRepository.GetObjekatByIdPopust(popustId);

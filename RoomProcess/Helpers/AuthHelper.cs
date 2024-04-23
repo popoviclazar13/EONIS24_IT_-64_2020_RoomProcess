@@ -84,7 +84,7 @@ namespace RoomProcess.Helpers
             }
             //
             //var claimValue = securityToken.Claims.First(claim => claim.Type == claimType).Value;
-            var claim = securityToken.Claims.FirstOrDefault(claim => claim.Type == claimType);
+            var claim = securityToken.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.Role); //MORA VAKO
             if (claim != null)
             {
                 var claimValue = claim.Value;

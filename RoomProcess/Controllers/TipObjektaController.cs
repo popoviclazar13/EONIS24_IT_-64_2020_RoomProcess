@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using RoomProcess.Helpers;
 using RoomProcess.InterfaceRepository;
 using RoomProcess.Models.DTO;
 using RoomProcess.Models.Entities;
@@ -25,7 +26,7 @@ namespace RoomProcess.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpGet]
-        //[Authorize]
+        [AuthRole("Role", "Admin")]
         public ActionResult GetTipObjektas(int pageNumber = 1, int pageSize = 10)
         {
             var tipObjektas = _tipObjektaRepository.GetTipObjektas()
@@ -41,13 +42,13 @@ namespace RoomProcess.Controllers
             return Ok(tipObjektasDTO);
         }
         [HttpGet("{tipObjektaId}")]
-        //[Authorize]
+        [AuthRole("Role", "Admin")]
         public ActionResult GetTipObjektaById(int tipObjektaId)
         {
             return Ok(_tipObjektaRepository.GetTipObjektaById(tipObjektaId));
         }
         [HttpPost]
-        //[AuthRole("Role", "Admin")]
+        [AuthRole("Role", "Admin")]
         public ActionResult<TipObjekta> CreateTipObjekta([FromBody] TipObjektaDTO tipObjektaDTO)
         {
             if (tipObjektaDTO == null)
@@ -87,7 +88,7 @@ namespace RoomProcess.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpPut]
-        //[AuthRole("Role", "Admin")]
+        [AuthRole("Role", "Admin")]
 
         public IActionResult UpdateTipObjekta([FromBody] TipObjektaDTO updateTipObjekta)
         {
@@ -123,7 +124,7 @@ namespace RoomProcess.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpDelete("{tipObjektaId}")]
-        //[AuthRole("Role", "Admin")]
+        [AuthRole("Role", "Admin")]
 
         public IActionResult DeleteTipObjekta(int tipObjektaId)
         {

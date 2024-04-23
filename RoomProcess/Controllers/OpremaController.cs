@@ -42,17 +42,6 @@ namespace RoomProcess.Controllers
 
             return Ok(opremasDTO);
 
-            /*
-            var opremass = _mapper.Map<List<OpremaDTO>>(_opremaRepository.GetOpremas());
-
-            if (!ModelState.IsValid)
-            {
-                ModelState.AddModelError("", "Bad request");
-                return StatusCode(400);
-
-            }
-
-            return Ok(opremass);*/
         }
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -60,7 +49,7 @@ namespace RoomProcess.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpGet("{opremaId}")]
-        //[Authorize]
+        [AllowAnonymous]
 
         public IActionResult GetOpremaById(int opremaId)
         {
@@ -86,7 +75,7 @@ namespace RoomProcess.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpPost]
-        //[AuthRole("Role", "Admin")]
+        [AuthRole("Role", "Admin")]
         public ActionResult<Oprema> CreateOprema([FromBody] OpremaDTO opremaCreate)
         {
 
@@ -94,10 +83,7 @@ namespace RoomProcess.Controllers
             {
                 return BadRequest(opremaCreate);
             }
-            /*if (aranzmanCreate.AranzmanID > 0)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError);
-            }*/
+
             var oprema = _opremaRepository.GetOpremas().Where(a => a.OpremaId == opremaCreate.OpremaId).FirstOrDefault();
 
             if (oprema != null)
@@ -127,8 +113,7 @@ namespace RoomProcess.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpPut]
-        //[AuthRole("Role", "Admin")]
-
+        [AuthRole("Role", "Admin")]
         public IActionResult UpdateOprema([FromBody] OpremaDTO updateOprema)
         {
             if (updateOprema == null)
@@ -163,7 +148,7 @@ namespace RoomProcess.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpDelete("{opremaId}")]
-        //[AuthRole("Role", "Admin")]
+        [AuthRole("Role", "Admin")]
 
         public IActionResult DeleteOprema(int opremaId)
         {
@@ -188,7 +173,7 @@ namespace RoomProcess.Controllers
         //Posebni GET zahtevi
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpGet("byObjekat/objekatId")]
-        //[Authorize]
+        [AllowAnonymous]
         public ActionResult GetOpremaByIdObjekat(int objekatId)
         {
             var opreme = _opremaRepository.GetOpremaByIdObjekat(objekatId);

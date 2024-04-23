@@ -30,7 +30,7 @@ namespace RoomProcess.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpGet]
-        //[Authorize]
+        [AuthRole("Role", "Admin")]
         public ActionResult GetKorisniks(int pageNumber = 1, int pageSize = 10)
         {
             var korisniks = _korisnikRepository.GetKorisniks()
@@ -46,8 +46,8 @@ namespace RoomProcess.Controllers
             return Ok(korisniksDTO);
         }
 
-        [HttpGet("korisnikId")]
-        //[Authorize]
+        [HttpGet("{korisnikId}")]
+        [AuthRole("Role", "Admin")]
         public ActionResult GetKorisnikById(int korisnikId)
         {
             if (!_korisnikRepository.KorisnikExist(korisnikId))
@@ -86,7 +86,7 @@ namespace RoomProcess.Controllers
         }
 
         [HttpPut("korisnikId")]//mora da se salje 
-        [AuthRole("Role", "Admin")]
+        [AuthRole("Role", "Korisnik")]
         public ActionResult UpdateKorisnik(int korisnikId, KorisnikRequestDTO data)
         {
             return Ok(_korisnikService.UpdateKorisnik(korisnikId, data));
@@ -100,7 +100,7 @@ namespace RoomProcess.Controllers
         }
         //Posebni GET zahtevi
         [HttpGet("byUloga/ulogaId")]
-        //[Authorize]
+        [AuthRole("Role", "Admin")]
         public ActionResult GetKorisnikByIdUloga(int ulogaId)
         {
             var korisnici = _korisnikRepository.GetKorisnikByIdUloga(ulogaId);

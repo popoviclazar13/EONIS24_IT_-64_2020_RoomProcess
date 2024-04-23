@@ -30,7 +30,7 @@ namespace RoomProcess.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpGet]
-        //[Authorize]
+        [AuthRole("Role", "Admin")]
         public ActionResult GetUlogas(int pageNumber = 1, int pageSize = 10)
         {
             var ulogas = _ulogaRepository.GetUlogas()
@@ -47,14 +47,14 @@ namespace RoomProcess.Controllers
         }
 
         [HttpGet("{ulogaId}")]
-        //[Authorize]
+        [AuthRole("Role", "Admin")]
         public ActionResult GetUlogaById(int ulogaId)
         {
             return Ok(_ulogaRepository.GetUlogaById(ulogaId));
         }
 
         [HttpPost]
-        //[AuthRole("Role", "Admin")]
+        [AuthRole("Role", "Admin")]
         public ActionResult<Uloga> CreateUloga([FromBody]UlogaDTO ulogaDTO)
         {
             if (ulogaDTO == null)
@@ -94,7 +94,7 @@ namespace RoomProcess.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpPut]
-        //[AuthRole("Role", "Admin")]
+        [AuthRole("Role", "Admin")]
         
         public IActionResult UpdateUloga([FromBody] UlogaDTO updateUloga)
         {
@@ -131,7 +131,7 @@ namespace RoomProcess.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpDelete("{ulogaId}")]
-        //[AuthRole("Role", "Admin")]
+        [AuthRole("Role", "Admin")]
 
         public IActionResult DeleteUloga(int ulogaId)
         {

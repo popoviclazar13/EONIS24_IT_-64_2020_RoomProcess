@@ -4,7 +4,7 @@ namespace RoomProcess.Models.DTO
 {
     public class RecenzijaCreateDTO
     {
-        public int RecenzijaId { get; set; }
+        //public int RecenzijaId { get; set; }
         public string Tekst { get; set; }
         public DateTime Datum { get; set; }
         public int Lokacija { get; set; }

@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using RoomProcess.Helpers;
 using RoomProcess.InterfaceRepository;
 using RoomProcess.Models.DTO;
 using RoomProcess.Models.Entities;
@@ -27,7 +29,7 @@ namespace RoomProcess.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpGet]
-        //[Authorize]
+        [AuthRole("Role", "Admin")]
         public ActionResult GetRecenzijas(int pageNumber = 1, int pageSize = 10)
         {
             /* var recenzijas = _mapper.Map<List<RecenzijaDTO>>(_recenzijaRepository.GetRecenzijas());
@@ -57,7 +59,7 @@ namespace RoomProcess.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpGet("{recenzijaId}")]
-        //[Authorize]
+        [AuthRole("Role", "Admin")]
 
         public IActionResult GetRecenzijaById(int recenzijaId)
         {
@@ -83,7 +85,7 @@ namespace RoomProcess.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpPost]
-        //[AuthRole("Role", "Admin")]
+        [AuthRole("Role", "Admin")]
         public ActionResult<Recenzija> CreateRecenzija([FromBody] RecenzijaCreateDTO recenzijaCreate)
         {
 
@@ -99,13 +101,13 @@ namespace RoomProcess.Controllers
                 return StatusCode(422, "Korisnik nema vezanu rezervaciju.");
             }
 
-            var recenzija = _recenzijaRepository.GetRecenzijas().Where(a => a.RecenzijaId == recenzijaCreate.RecenzijaId).FirstOrDefault();
+            /*var recenzija = _recenzijaRepository.GetRecenzijas().Where(a => a.RecenzijaId == recenzijaCreate.RecenzijaId).FirstOrDefault();
 
             if (recenzija != null)
             {
                 ModelState.AddModelError("", "Recenzija already exists");
                 return StatusCode(422);
-            }
+            }*/
 
             if (!ModelState.IsValid)
             {
@@ -128,7 +130,7 @@ namespace RoomProcess.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpPut]
-        //[AuthRole("Role", "Admin")]
+        [AuthRole("Role", "Admin")]
 
         public IActionResult UpdateRecenzija([FromBody] RecenzijaUpdateDTO updateRecenzija)
         {
@@ -170,7 +172,7 @@ namespace RoomProcess.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpDelete("{recenzijaId}")]
-        //[AuthRole("Role", "Admin")]
+        [AuthRole("Role", "Admin")]
 
         public IActionResult DeleteRecenzija(int recenzijaId)
         {
@@ -194,8 +196,8 @@ namespace RoomProcess.Controllers
         }
         //Posebni GET zahtevi
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [HttpGet("byKorisnik/korisnikId")]
-        //[Authorize]
+        [HttpGet("byKorisnik/{korisnikId}")] // {} oznacava da trazi parametar unutar URL
+        [AuthRole("Role", "Korisnik")]
         public ActionResult GetRecenzijaByIdKorisnik(int korisnikId)
         {
             var recenzije = _recenzijaRepository.GetRecenzijaByIdKorisnik(korisnikId);
@@ -214,11 +216,11 @@ namespace RoomProcess.Controllers
 
         }
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [HttpGet("byRezervacija/rezervacijaId")]
-        //[Authorize]
-        public ActionResult GetRecenzijaByIdRezervacija(int rezrvacijaId)
+        [HttpGet("byRezervacija/{rezervacijaId}")]
+        [AuthRole("Role", "Admin")]
+        public ActionResult GetRecenzijaByIdRezervacija(int rezervacijaId)
         {
-            var recenzije = _recenzijaRepository.GetRecenzijaByIdRezervacija(rezrvacijaId);
+            var recenzije = _recenzijaRepository.GetRecenzijaByIdRezervacija(rezervacijaId);
 
             if (!recenzije.Any())
             {

@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using RoomProcess.Helpers;
 using RoomProcess.InterfaceRepository;
 using RoomProcess.Models.DTO;
 using RoomProcess.Models.Entities;
@@ -25,6 +27,7 @@ namespace RoomProcess.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpGet]
+        [AuthRole("Role", "Admin")]
         public ActionResult GetPopusts(int pageNumber = 1, int pageSize = 10)
         {
             var popusts = _popustRepository.GetPopusts()
@@ -41,7 +44,7 @@ namespace RoomProcess.Controllers
         }
 
         [HttpGet("{popustId}")]
-        //[Authorize]
+        [AllowAnonymous]
         public ActionResult GetPopustById(int popustId)
         {
             if (!_popustRepository.PopustExist(popustId))
@@ -56,7 +59,7 @@ namespace RoomProcess.Controllers
             }
         }
         [HttpPost]
-        //[AuthRole("Role", "Admin")]
+        [AuthRole("Role", "Admin")]
         public ActionResult<Popust> CreatePopust([FromBody] PopustDTO popustDTO)
         {
             if (popustDTO == null)
@@ -92,7 +95,7 @@ namespace RoomProcess.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpPut]
-        //[AuthRole("Role", "Admin")]
+        [AuthRole("Role", "Admin")]
 
         public IActionResult UpdatePopust([FromBody] PopustDTO updatePopust)
         {
@@ -128,7 +131,7 @@ namespace RoomProcess.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpDelete("{popustId}")]
-        //[AuthRole("Role", "Admin")]
+        [AuthRole("Role", "Admin")]
         public IActionResult DeletePopust(int popustId)
         {
             var popust = _popustRepository.GetPopustById(popustId);

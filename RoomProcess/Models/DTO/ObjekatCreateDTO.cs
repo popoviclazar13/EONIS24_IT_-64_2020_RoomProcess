@@ -4,7 +4,7 @@ namespace RoomProcess.Models.DTO
 {
     public class ObjekatCreateDTO
     {
-        public int ObjekatId { get; set; }
+        //public int ObjekatId { get; set; }
         public string ObjekatNaziv { get; set; }
         public string Adresa { get; set; }
         public string Grad { get; set; }
