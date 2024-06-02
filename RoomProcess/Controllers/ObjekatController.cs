@@ -69,8 +69,8 @@ namespace RoomProcess.Controllers
             }
         }
         [HttpPost]
-        //[AuthRole("Role", "Admin")]
-        [AuthRole("Role", "Vlasnik")]
+        [AuthRole("Role", "Admin")]
+        //[AuthRole("Role", "Vlasnik")]
         public ActionResult<Popust> CreateObjekat([FromBody] ObjekatCreateDTO objekatCreateDTO)
         {
             if (objekatCreateDTO == null)
@@ -94,6 +94,16 @@ namespace RoomProcess.Controllers
 
             var objekatMap = _mapper.Map<Objekat>(objekatCreateDTO);
 
+            /*if (objekatCreateDTO.Slike != null && objekatCreateDTO.Slike.Count > 0)
+            {
+                objekatMap.Slike = new List<SlikaDTO>();
+                foreach (var slikaDTO in objekatCreateDTO.Slike)
+                {
+                    var slika = _mapper.Map<SlikaDTO>(slikaDTO);
+                    objekatMap.Slike.Add(slika);
+                }
+            }*/
+
             if (!_objekatRepository.CreateObjekat(objekatMap))
             {
                 ModelState.AddModelError("", "Something went wrong while saving");
@@ -107,7 +117,8 @@ namespace RoomProcess.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpPut]
-        [AuthRole("Role", "Vlasnik")]
+        [AuthRole("Role", "Admin")]
+        //[AuthRole("Role", "Vlasnik")]
 
         public IActionResult UpdateObjekat([FromBody] ObjekatUpdateDTO updateObjekat)
         {
@@ -143,8 +154,8 @@ namespace RoomProcess.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpDelete("{objekatId}")]
-        //[AuthRole("Role", "Admin")]
-        [AuthRole("Role", "Vlasnik")]
+        [AuthRole("Role", "Admin")]
+        //[AuthRole("Role", "Vlasnik")]
         public IActionResult DeleteObjekat(int objekatId)
         {
             var objekat = _objekatRepository.GetObjekatById(objekatId);

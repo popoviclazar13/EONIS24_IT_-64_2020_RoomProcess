@@ -117,6 +117,10 @@ namespace RoomProcess.Services.KorisnikService
 
                     ret.Message = $"You logged in successfully";
                     ret.TransferObject = token;
+                    //Dodato zbog Logovanja da znamo koja je uloga
+                    ret.Role = userFromDb.UlogaId;
+                    //Dodato zbog Logovanja da znamo koji korisnik je ulogovan
+                    ret.Name = userFromDb.Ime;
                 }
                 else
                 {

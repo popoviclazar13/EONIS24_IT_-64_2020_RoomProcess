@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using RoomProcess.Models.DTO;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace RoomProcess.Models.Entities
@@ -15,7 +16,7 @@ namespace RoomProcess.Models.Entities
         public int x {  get; set; }
         public int y { get; set; }
 
-        public ICollection<Slika> Slike { get; set; }
+        //public ICollection<SlikaDTO> Slike { get; set; }
 
         [ForeignKey("Korisnik")]
         public int KorisnikId { get; set; }

@@ -32,7 +32,8 @@ namespace RoomProcess.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpGet]
-        [AuthRole("Role", "Admin")]
+        //[AuthRole("Role", "Admin")]
+        [AllowAnonymous]
         public IActionResult GetRezervacijas(int pageNumber = 1, int pageSize = 10)
         {
             var rezervacijas = _rezervacijaRepository.GetRezervacijas()

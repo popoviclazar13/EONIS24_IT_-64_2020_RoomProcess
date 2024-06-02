@@ -9,7 +9,7 @@ namespace RoomProcess.Models.Entities
         public int SlikaId { get; set; }
         public string UrlSlike { get; set; }
         [ForeignKey("Objekat")]
-        public int ObjekatId { get; set; }
+       public int ObjekatId { get; set; }
         public Objekat Objekat { get; set; }
     }
 }

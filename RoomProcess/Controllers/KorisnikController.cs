@@ -91,7 +91,21 @@ namespace RoomProcess.Controllers
         {
             return Ok(_korisnikService.UpdateKorisnik(korisnikId, data));
         }
+        //Dodato da bi Admin mogao da kreira i azurira korisnika
+        [AuthRole("Role", "Admin")]
+        [HttpPost("admin/Register")]
+        public ActionResult CreateKorisnikAdmin([FromBody] KorisnikRequestDTO korisnik)
+        {
+            return Ok(_korisnikService.CreateKorisnik(korisnik));
+        }
 
+        [HttpPut("admin/{korisnikId}")]//mora da se salje 
+        [AuthRole("Role", "Admin")]
+        public ActionResult UpdateKorisnikAdmin(int korisnikId, KorisnikRequestDTO data)
+        {
+            return Ok(_korisnikService.UpdateKorisnik(korisnikId, data));
+        }
+        //
         [HttpDelete("{korisnikId}")]
         [AuthRole("Role", "Admin")]
         public ActionResult DeleteKorisnik(int korisnikId)

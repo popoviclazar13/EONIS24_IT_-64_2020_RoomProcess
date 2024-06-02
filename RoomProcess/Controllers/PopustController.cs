@@ -27,7 +27,8 @@ namespace RoomProcess.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpGet]
-        [AuthRole("Role", "Admin")]
+        //[AuthRole("Role", "Admin")]
+        [AllowAnonymous]
         public ActionResult GetPopusts(int pageNumber = 1, int pageSize = 10)
         {
             var popusts = _popustRepository.GetPopusts()

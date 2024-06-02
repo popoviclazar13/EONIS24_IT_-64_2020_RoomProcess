@@ -40,6 +40,7 @@ namespace RoomProcess.Repository
                 .Include(x => x.Korisnik)
                 .Include(x => x.TipObjekta)
                 .Include(x => x.Popust)
+                //.Include(x => x.Slike) // dodato zbog slika
                                         .ToList();
         }
 

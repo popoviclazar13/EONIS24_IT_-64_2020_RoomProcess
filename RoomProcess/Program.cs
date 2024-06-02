@@ -25,6 +25,17 @@ builder.Services.AddDbContext<DataContext>(options =>
 });
 //
 
+//ZA CORS, vezano za front da omoguci uzimanje podataka
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddCors(
+    options => {
+        options.AddPolicy("Cors Policy", policy =>
+        {
+            policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:4200");
+        });
+    });
+//
+
 // Scope!!!
 builder.Services.AddScoped<IKorisnikRepository, KorisnikRepository>();
 builder.Services.AddScoped<IUlogaRepository, UlogaRepository>();
@@ -78,6 +89,15 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// ZA FRONTEND ROUTING I CORS
+app.UseRouting();
+
+app.UseCors(x => x
+    .AllowAnyOrigin()
+    .AllowAnyMethod()
+    .AllowAnyHeader());
+//
 
 app.UseAuthentication();
 

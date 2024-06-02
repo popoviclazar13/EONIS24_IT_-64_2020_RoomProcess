@@ -29,7 +29,8 @@ namespace RoomProcess.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpGet]
-        [AuthRole("Role", "Admin")]
+        //[AuthRole("Role", "Admin")]
+        [AllowAnonymous]
         public ActionResult GetRecenzijas(int pageNumber = 1, int pageSize = 10)
         {
             /* var recenzijas = _mapper.Map<List<RecenzijaDTO>>(_recenzijaRepository.GetRecenzijas());
