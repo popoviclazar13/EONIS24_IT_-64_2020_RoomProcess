@@ -86,7 +86,8 @@ namespace RoomProcess.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpPost]
-        [AuthRole("Role", "Admin")]
+        //[AuthRole("Role", "Admin")]
+        [AuthRole("Role", "Korisnik")]
         public ActionResult<Recenzija> CreateRecenzija([FromBody] RecenzijaCreateDTO recenzijaCreate)
         {
 

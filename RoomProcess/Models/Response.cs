@@ -17,6 +17,8 @@
         public int Role { get; set; }
         //Dodato da bi znali koji korisnik je ulogovan
         public string Name { get; set; }
+        //Dodato da znamo ID Korisnika
+        public int KorisnikID { get; set; }
 
         public ResponseNoData()
         {

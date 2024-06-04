@@ -156,7 +156,9 @@ namespace RoomProcess.Controllers
                 return StatusCode(500);
             }
 
-            return Ok("Rezervacija uspešno kreirana.");
+            //return Ok("Rezervacija uspešno kreirana.");
+            var rezervacijaDto = _mapper.Map<RezervacijaDTO>(rezervacijaMap);
+            return Ok(rezervacijaDto);
         }
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -256,8 +258,8 @@ namespace RoomProcess.Controllers
         //Posebni GET zahtevi
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpGet("byKorisnik/{korisnikId}")]
-        [AuthRole("Role", "Admin")]
-        //[AuthRole("Role", "Korisnik")]
+        //[AuthRole("Role", "Admin")]
+        [AuthRole("Role", "Korisnik")]
         public ActionResult GetRezervacijaByIdKorisnik(int korisnikId)
         {
             var rezervacije = _rezervacijaRepository.GetRezervacijaByIdKorisnik(korisnikId);

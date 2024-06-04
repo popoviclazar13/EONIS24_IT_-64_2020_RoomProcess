@@ -47,7 +47,8 @@ namespace RoomProcess.Controllers
         }
 
         [HttpGet("{korisnikId}")]
-        [AuthRole("Role", "Admin")]
+        //[AuthRole("Role", "Admin")]
+        [AllowAnonymous]
         public ActionResult GetKorisnikById(int korisnikId)
         {
             if (!_korisnikRepository.KorisnikExist(korisnikId))
@@ -100,7 +101,8 @@ namespace RoomProcess.Controllers
         }
 
         [HttpPut("admin/{korisnikId}")]//mora da se salje 
-        [AuthRole("Role", "Admin")]
+        //[AuthRole("Role", "Admin")]
+        [AuthRole("Role", "Korisnik")]
         public ActionResult UpdateKorisnikAdmin(int korisnikId, KorisnikRequestDTO data)
         {
             return Ok(_korisnikService.UpdateKorisnik(korisnikId, data));

@@ -121,6 +121,8 @@ namespace RoomProcess.Services.KorisnikService
                     ret.Role = userFromDb.UlogaId;
                     //Dodato zbog Logovanja da znamo koji korisnik je ulogovan
                     ret.Name = userFromDb.Ime;
+                    //Dodato da znamo korisnikov ID zbog Rezervacija
+                    ret.KorisnikID = userFromDb.KorisnikId;
                 }
                 else
                 {
