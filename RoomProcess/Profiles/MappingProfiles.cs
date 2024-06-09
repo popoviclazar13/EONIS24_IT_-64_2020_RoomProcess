@@ -12,6 +12,10 @@ namespace RoomProcess.Profiles
             CreateMap<Korisnik, KorisnikDTO>();
             CreateMap<KorisnikDTO, Korisnik>();
 
+            //Racun
+            CreateMap<Racun, RacunDTO>();
+            CreateMap<RacunDTO, Racun>();
+
             //Recenzija
             CreateMap<Recenzija, RecenzijaDTO>();
             CreateMap<RecenzijaDTO, Recenzija>();

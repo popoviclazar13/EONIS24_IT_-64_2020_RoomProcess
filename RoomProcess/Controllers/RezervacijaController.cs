@@ -34,9 +34,9 @@ namespace RoomProcess.Controllers
         [HttpGet]
         //[AuthRole("Role", "Admin")]
         [AllowAnonymous]
-        public IActionResult GetRezervacijas(int pageNumber = 1, int pageSize = 10)
+        public IActionResult GetRezervacijas(/*int pageNumber = 1, int pageSize = 10*/)
         {
-            var rezervacijas = _rezervacijaRepository.GetRezervacijas()
+            /*var rezervacijas = _rezervacijaRepository.GetRezervacijas()
                  .Skip((pageNumber - 1) * pageSize)
                  .Take(pageSize)
                  .ToList();
@@ -46,7 +46,16 @@ namespace RoomProcess.Controllers
             if (rezervacijasDTO.Count == 0)
                 return NotFound("No rezervacija found");
 
-            return Ok(rezervacijasDTO);
+            return Ok(rezervacijasDTO);*/
+            var rezervacijas = _mapper.Map<List<RezervacijaDTO>>(_rezervacijaRepository.GetRezervacijas());
+
+            if (!ModelState.IsValid)
+            {
+                ModelState.AddModelError("", "Bad request");
+                return StatusCode(400);
+
+            }
+            return Ok(rezervacijas);
         }
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -54,7 +63,8 @@ namespace RoomProcess.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpGet("{rezervacijaId}")]
-        [AuthRole("Role", "Admin")]
+        //[AuthRole("Role", "Admin")]
+        [AllowAnonymous]
 
         public IActionResult GetRezervacijaById(int rezervacijaId)
         {
@@ -259,7 +269,8 @@ namespace RoomProcess.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpGet("byKorisnik/{korisnikId}")]
         //[AuthRole("Role", "Admin")]
-        [AuthRole("Role", "Korisnik")]
+        //[AuthRole("Role", "Korisnik")]
+        [AllowAnonymous]
         public ActionResult GetRezervacijaByIdKorisnik(int korisnikId)
         {
             var rezervacije = _rezervacijaRepository.GetRezervacijaByIdKorisnik(korisnikId);

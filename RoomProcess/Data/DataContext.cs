@@ -18,6 +18,8 @@ namespace RoomProcess.Data
         public DbSet<Recenzija> Recenzija { get; set; }
         public DbSet<Rezervacija> Rezervacija { get; set; }
         public DbSet<TipObjekta> TipObjekta { get; set; }
+        //Za STRIPE
+        public DbSet<Racun> Racun { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

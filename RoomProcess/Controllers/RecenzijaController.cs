@@ -31,9 +31,9 @@ namespace RoomProcess.Controllers
         [HttpGet]
         //[AuthRole("Role", "Admin")]
         [AllowAnonymous]
-        public ActionResult GetRecenzijas(int pageNumber = 1, int pageSize = 10)
+        public ActionResult GetRecenzijas(/*int pageNumber = 1, int pageSize = 10*/)
         {
-            /* var recenzijas = _mapper.Map<List<RecenzijaDTO>>(_recenzijaRepository.GetRecenzijas());
+             var recenzijas = _mapper.Map<List<RecenzijaDTO>>(_recenzijaRepository.GetRecenzijas());
 
              if (!ModelState.IsValid)
              {
@@ -41,8 +41,8 @@ namespace RoomProcess.Controllers
                  return StatusCode(400);
 
              }
-             return Ok(recenzijas);*/
-            var recenzijas = _recenzijaRepository.GetRecenzijas()
+             return Ok(recenzijas);
+            /*var recenzijas = _recenzijaRepository.GetRecenzijas()
                  .Skip((pageNumber - 1) * pageSize)
                  .Take(pageSize)
                  .ToList();
@@ -52,7 +52,7 @@ namespace RoomProcess.Controllers
             if (recenzijasDTO.Count == 0)
                 return NotFound("No recenzija found");
 
-            return Ok(recenzijasDTO);
+            return Ok(recenzijasDTO);*/
         }
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]

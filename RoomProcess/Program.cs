@@ -7,6 +7,8 @@ using RoomProcess.InterfaceRepository;
 using RoomProcess.Profiles;
 using RoomProcess.Repository;
 using RoomProcess.Services.KorisnikService;
+using RoomProcess.Services.RacunService;
+using Stripe;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,6 +25,12 @@ builder.Services.AddDbContext<DataContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+//
+
+//ZA STRIPE
+builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("StripeSettings"));
+var stripeSettings = builder.Configuration.GetSection("StripeSettings").Get<StripeSettings>();
+StripeConfiguration.ApiKey = stripeSettings.SecretKey;
 //
 
 //ZA CORS, vezano za front da omoguci uzimanje podataka
@@ -46,6 +54,7 @@ builder.Services.AddScoped<IRezervacijaRepository, RezervacijaRepository>();
 builder.Services.AddScoped<IPopustRepository, PopustRepository>();
 builder.Services.AddScoped<IOpremaRepository, OpremaRepository>();
 builder.Services.AddScoped<IKorisnikService, KorisnikService>();
+builder.Services.AddScoped<IRacunService, RacunService>();
 //
 
 //Token
