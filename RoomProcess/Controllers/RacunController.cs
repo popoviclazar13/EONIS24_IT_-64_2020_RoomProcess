@@ -6,6 +6,8 @@ using RoomProcess.Models.Entities;
 using RoomProcess.Services.RacunService;
 using Stripe;
 using Stripe.Checkout;
+using RoomProcess.Repository;
+using RoomProcess.InterfaceRepository;
 
 namespace RoomProcess.Controllers
 {
@@ -59,15 +61,17 @@ namespace RoomProcess.Controllers
         }*/
         private readonly StripeSettings _stripeSettings;
         private readonly ILogger<RacunController> _logger; // Dodajte ovde ILogger
+        private readonly IRezervacijaRepository _rezervacijaRepository;
 
-        public RacunController(IOptions<StripeSettings> stripeSettings, ILogger<RacunController> logger)
+        public RacunController(IOptions<StripeSettings> stripeSettings, ILogger<RacunController> logger, IRezervacijaRepository rezervacijaRepository)
         {
             _stripeSettings = stripeSettings.Value;
             _logger = logger;
+            _rezervacijaRepository = rezervacijaRepository;
         }
 
         [HttpPost("create-checkout-session")]
-        public ActionResult CreateCheckoutSession(decimal cena)
+        public ActionResult CreateCheckoutSession(decimal cena, int rezervacijaId)
         {
             _logger.LogInformation("Creating checkout session for amount: {Cena}", cena);
 
@@ -101,6 +105,30 @@ namespace RoomProcess.Controllers
             var service = new SessionService();
             Session session = service.Create(options);
 
+            try
+            {
+                // Poziv servisa za rezervaciju
+                 // Prilagodite naziv servisa prema vašem projektu
+                var rezervacija = _rezervacijaRepository.GetRezervacijaById(rezervacijaId); // Implementirajte logiku za pronalaženje rezervacije
+
+                if (rezervacija != null)
+                {
+                    // Ažuriranje potvrde rezervacije
+                    rezervacija.Potvrda = true; // Postavite vrednost potvrdeRezervacije na true
+                    _rezervacijaRepository.Save(); // Implementirajte logiku za ažuriranje rezervacije
+                }
+                else
+                {
+                    _logger.LogError("Rezervacija sa ID {RezervacijaId} nije pronađena.", rezervacijaId);
+                    return NotFound();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Greška prilikom ažuriranja rezervacije sa ID {RezervacijaId}.", rezervacijaId);
+                return StatusCode(500, "Greška prilikom obrade rezervacije.");
+            }
+
             //return Ok(new { sessionId = session.Id });
             return Ok(new { sessionId = session.Url });
         }
@@ -123,7 +151,22 @@ namespace RoomProcess.Controllers
                 if (stripeEvent.Type == Events.CheckoutSessionCompleted)
                 {
                     var session = stripeEvent.Data.Object as Session;
-                    // Process the checkout session as needed
+                    
+                    if (session != null)
+                    {
+                        var paymentIntentService = new PaymentIntentService();
+                        var paymentIntent = paymentIntentService.Get(session.PaymentIntentId);
+
+                        var paymentDate = paymentIntent.Created;
+                        var paymentSuccessful = paymentIntent.Status;
+
+                        return Ok(new
+                        {
+                            message = "Plaćanje je izvršeno.",
+                            paymentDate = paymentDate,
+                            status = paymentSuccessful
+                        });
+                    }
                 }
 
                 return Ok();
@@ -132,6 +175,42 @@ namespace RoomProcess.Controllers
             {
                 _logger.LogError(e, "Error while processing Stripe webhook");
                 return BadRequest();
+            }
+        }
+        [HttpGet("transactions")]
+        public async Task<IActionResult> GetTransactions()
+        {
+            try
+            {
+                var options = new BalanceTransactionListOptions
+                {
+                    Limit = 20, // Limit the number of transactions to retrieve
+                };
+
+                var service = new BalanceTransactionService();
+                var transactions = await service.ListAsync(options);
+
+                var simplifiedTransactions = new List<object>();
+                foreach (var transaction in transactions)
+                {
+                    var simplifiedTransaction = new
+                    {
+                        Amount = transaction.Amount,
+                        Customer = transaction.Id,
+                        Currency = transaction.Currency,
+                        Date = transaction.Created,
+                    };
+                    simplifiedTransactions.Add(simplifiedTransaction);
+                }
+                return Ok(simplifiedTransactions);
+            }
+            catch (StripeException e)
+            {
+                return StatusCode((int)e.HttpStatusCode, new { error = e.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = "An error occurred while fetching transactions." });
             }
         }
     }
