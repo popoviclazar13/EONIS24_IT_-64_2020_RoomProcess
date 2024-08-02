@@ -199,6 +199,7 @@ namespace RoomProcess.Controllers
                         Customer = transaction.Id,
                         Currency = transaction.Currency,
                         Date = transaction.Created,
+                        Status = transaction.Status,
                     };
                     simplifiedTransactions.Add(simplifiedTransaction);
                 }
